@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ site_settings.site_name if site_settings else 'نیک سرش' }} - چسب و ملزومات کاشی کاری{% endblock %}</title>
+    <meta name="description" content="مرجع تخصصی چسب و ملزومات کاشی کاری - فروش آنلاین چسب کاشی، چسب سرامیک، پودر بندکشی، عایق و ابزار کاشی‌کاری">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <header class="header" id="header">
+        <div class="header-inner">
+            <div class="header-right">
+                <a href="{{ url_for('shop.index') }}" class="logo" id="siteLogo">
+                    {% if site_settings and site_settings.logo_path %}
+                        <img src="{{ site_settings.logo_path }}" alt="{{ site_settings.site_name }}" class="logo-img">
+                    {% else %}
+                        <span class="logo-text">نیک سرش</span>
+                    {% endif %}
+                </a>
+                <button class="mobile-toggle" id="mobileToggle" aria-label="منو">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+            <nav class="header-nav" id="headerNav">
+                <a href="{{ url_for('shop.index') }}">خانه</a>
+                <a href="{{ url_for('shop.shop') }}">فروشگاه</a>
+                <a href="{{ url_for('shop.shop') }}">محصولات</a>
+                <a href="{{ url_for('shop.shop') }}">دسته‌بندی‌ها</a>
+                <a href="{{ url_for('shop.about') }}">درباره ما</a>
+                <a href="{{ url_for('shop.contact') }}">تماس با ما</a>
+            </nav>
+            <div class="header-left">
+                <form action="{{ url_for('shop.shop') }}" method="GET" class="header-search">
+                    <input type="text" name="search" placeholder="جستجوی محصول..." class="search-input">
+                    <button type="submit" class="search-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </button>
+                </form>
+                <a href="{{ url_for('shop.cart') }}" class="header-icon" title="سبد خرید">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                    {% if cart_count > 0 %}<span class="cart-badge">{{ cart_count }}</span>{% endif %}
+                </a>
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('auth.account') }}" class="header-icon header-icon-label">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <span>پنل کاربری</span>
+                </a>
+                {% else %}
+                <a href="{{ url_for('auth.login') }}" class="header-icon header-icon-label">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                    <span>ورود</span>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <nav class="mobile-nav">
+            <a href="{{ url_for('shop.index') }}">خانه</a>
+            <a href="{{ url_for('shop.shop') }}">فروشگاه</a>
+            <a href="{{ url_for('shop.shop') }}">محصولات</a>
+            <a href="{{ url_for('shop.shop') }}">دسته‌بندی‌ها</a>
+            <a href="{{ url_for('shop.about') }}">درباره ما</a>
+            <a href="{{ url_for('shop.contact') }}">تماس با ما</a>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('auth.account') }}">پنل کاربری</a>
+            {% else %}
+            <a href="{{ url_for('auth.login') }}">ورود / ثبت‌نام</a>
+            {% endif %}
+        </nav>
+    </div>
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-container">
+            {% for category, message in messages %}
+            <div class="flash-message flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <div class="footer-logo">
+                    {% if site_settings and site_settings.logo_path %}
+                        <img src="{{ site_settings.logo_path }}" alt="{{ site_settings.site_name }}" class="footer-logo-img">
+                    {% else %}
+                        <span class="footer-logo-text">نیک سرش</span>
+                    {% endif %}
+                </div>
+                <p class="footer-about">مرجع تخصصی چسب و ملزومات کاشی کاری. ارائه محصولات با کیفیت برای پروژه‌های ساختمانی و حرفه‌ای.</p>
+            </div>
+            <div class="footer-col">
+                <h4>لینک‌های سریع</h4>
+                <ul class="footer-links">
+                    <li><a href="{{ url_for('shop.index') }}">خانه</a></li>
+                    <li><a href="{{ url_for('shop.shop') }}">فروشگاه</a></li>
+                    <li><a href="{{ url_for('shop.about') }}">درباره ما</a></li>
+                    <li><a href="{{ url_for('shop.contact') }}">تماس با ما</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>تماس با ما</h4>
+                <ul class="footer-contact">
+                    {% if site_settings and site_settings.phone %}<li>تلفن: {{ site_settings.phone }}</li>{% endif %}
+                    {% if site_settings and site_settings.address %}<li>آدرس: {{ site_settings.address }}</li>{% endif %}
+                    {% if site_settings and site_settings.email %}<li>ایمیل: {{ site_settings.email }}</li>{% endif %}
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>شبکه‌های اجتماعی</h4>
+                <div class="footer-social">
+                    {% if site_settings and site_settings.instagram %}
+                    <a href="https://instagram.com/{{ site_settings.instagram }}" class="social-link" target="_blank">اینستاگرام</a>
+                    {% endif %}
+                    {% if site_settings and site_settings.telegram %}
+                    <a href="https://t.me/{{ site_settings.telegram }}" class="social-link" target="_blank">تلگرام</a>
+                    {% endif %}
+                    {% if site_settings and site_settings.whatsapp %}
+                    <a href="https://wa.me/{{ site_settings.whatsapp }}" class="social-link" target="_blank">واتساپ</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© ۱۴۰۳ {{ site_settings.site_name if site_settings else 'نیک سرش' }} — تمام حقوق محفوظ است</p>
+        </div>
+    </footer>
+
+    <div class="modal-overlay" id="adminModal">
+        <div class="modal-box">
+            <button class="modal-close" id="adminModalClose">&times;</button>
+            <h2 class="modal-title">ورود به پنل مدیریت</h2>
+            <form action="{{ url_for('admin.login') }}" method="POST" class="auth-form">
+                <div class="form-group">
+                    <label>نام کاربری</label>
+                    <input type="text" name="username" required placeholder="نام کاربری">
+                </div>
+                <div class="form-group">
+                    <label>رمز عبور</label>
+                    <input type="password" name="password" required placeholder="رمز عبور">
+                </div>
+                <button type="submit" class="btn btn-gold btn-full btn-lg">ورود</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

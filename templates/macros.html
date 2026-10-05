@@ -1,0 +1,52 @@
+{% macro product_card(product) %}
+<div class="product-card" data-product-id="{{ product.id }}">
+    <a href="{{ url_for('shop.product_detail', id=product.id) }}" class="product-card-link">
+        <div class="product-card-image">
+            {% set img = product.images | selectattr('is_primary') | first %}
+            {% if img and img.image_path %}
+                <img src="{{ img.image_path }}" alt="{{ product.name }}" loading="lazy">
+            {% elif product.images %}
+                <img src="{{ product.images[0].image_path }}" alt="{{ product.name }}" loading="lazy">
+            {% else %}
+                <div class="product-card-placeholder">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1"/>
+                        <rect x="14" y="14" width="7" height="7" rx="1"/>
+                    </svg>
+                </div>
+            {% endif %}
+            {% if product.discount_price %}
+                <span class="product-badge-discount">تخفیف</span>
+            {% endif %}
+            {% if product.stock == 0 %}
+                <span class="product-badge-stock">ناموجود</span>
+            {% endif %}
+        </div>
+        <div class="product-card-body">
+            {% if product.category %}
+                <span class="product-card-category">{{ product.category.name }}</span>
+            {% endif %}
+            <h3 class="product-card-name">{{ product.name }}</h3>
+            {% if product.short_desc %}
+                <p class="product-card-desc">{{ product.short_desc }}</p>
+            {% endif %}
+            <div class="product-card-price">
+                {% if product.discount_price %}
+                    <span class="price-old">{{ "{:,}".format(product.price) }}</span>
+                    <span class="price-new">{{ "{:,}".format(product.discount_price) }} <small>تومان</small></span>
+                {% else %}
+                    <span class="price-current">{{ "{:,}".format(product.price) }} <small>تومان</small></span>
+                {% endif %}
+            </div>
+        </div>
+    </a>
+    <div class="product-card-actions">
+        <a href="{{ url_for('shop.product_detail', id=product.id) }}" class="btn btn-outline btn-sm">مشاهده</a>
+        <button class="btn btn-gold btn-sm add-to-cart-btn" data-product-id="{{ product.id }}" {% if product.stock == 0 %}disabled{% endif %}>
+            افزودن به سبد
+        </button>
+    </div>
+</div>
+{% endmacro %}

@@ -1,0 +1,30 @@
+{% extends "admin/base.html" %}
+{% block title %}سفارشات{% endblock %}
+{% block admin_header %}مدیریت سفارشات{% endblock %}
+
+{% block admin_content %}
+<div class="admin-toolbar">
+    <a href="{{ url_for('admin.orders') }}" class="btn {% if current_status == 'all' %}btn-gold{% else %}btn-outline{% endif %} btn-sm">همه</a>
+    {% for key, label in order_status.items() %}
+    <a href="{{ url_for('admin.orders', status=key) }}" class="btn {% if current_status == key %}btn-gold{% else %}btn-outline{% endif %} btn-sm">{{ label }}</a>
+    {% endfor %}
+</div>
+<table class="admin-table">
+    <thead><tr><th>شماره سفارش</th><th>مشتری</th><th>موبایل</th><th>مبلغ</th><th>وضعیت</th><th>تاریخ</th><th>عملیات</th></tr></thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.order_number }}</td>
+            <td>{{ order.first_name }} {{ order.last_name }}</td>
+            <td>{{ order.phone }}</td>
+            <td>{{ "{:,}".format(order.total) }} ت</td>
+            <td><span class="order-status status-{{ order.status }}">{{ order_status[order.status] }}</span></td>
+            <td>{{ order.created_at.strftime('%Y/%m/%d') }}</td>
+            <td><a href="{{ url_for('admin.order_detail', id=order.id) }}" class="btn btn-outline btn-sm">مشاهده</a></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="empty-text">سفارشی وجود ندارد</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

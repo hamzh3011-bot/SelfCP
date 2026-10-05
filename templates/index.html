@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% from "macros.html" import product_card %}
+{% block title %}نیک سرش - مرجع تخصصی چسب و ملزومات کاشی کاری{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <canvas id="hero-canvas"></canvas>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1 class="hero-title">نیک سرش</h1>
+        <p class="hero-subtitle">مرجع تخصصی چسب و ملزومات کاشی کاری</p>
+        <p class="hero-text">محصولات تخصصی کاشی و سرامیک با کیفیت بالا برای پروژه‌های ساختمانی و حرفه‌ای</p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('shop.shop') }}" class="btn btn-gold btn-lg">مشاهده محصولات</a>
+            <a href="{{ url_for('shop.shop') }}" class="btn btn-outline-gold btn-lg">خرید آنلاین</a>
+        </div>
+    </div>
+    <div class="hero-scroll">
+        <span>اسکرول کنید</span>
+        <div class="scroll-line"></div>
+    </div>
+</section>
+
+{% if banners %}
+<section class="banner-section">
+    <div class="container">
+        {% for banner in banners %}
+        <div class="banner-card">
+            {% if banner.image_path %}
+            <div class="banner-image" style="background-image: url('{{ banner.image_path }}')"></div>
+            {% else %}
+            <div class="banner-image banner-image-default"></div>
+            {% endif %}
+            <div class="banner-content">
+                <h2 class="banner-title">{{ banner.title }}</h2>
+                <p class="banner-text">{{ banner.text }}</p>
+                {% if banner.link %}
+                <a href="{{ banner.link }}" class="btn btn-gold">مشاهده</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section class="section categories-section" id="categories">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">دسته‌بندی محصولات</h2>
+            <p class="section-subtitle">محصولات ما را بر اساس دسته‌بندی مرور کنید</p>
+        </div>
+        <div class="categories-grid">
+            {% for category in categories %}
+            <a href="{{ url_for('shop.shop', category=category.id) }}" class="category-card">
+                <div class="category-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1"/>
+                        <rect x="14" y="14" width="7" height="7" rx="1"/>
+                    </svg>
+                </div>
+                <h3 class="category-card-name">{{ category.name }}</h3>
+                {% if category.description %}
+                <p class="category-card-desc">{{ category.description }}</p>
+                {% endif %}
+                <span class="category-card-count">{{ category.products | count }} محصول</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section featured-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">محصولات ویژه</h2>
+            <p class="section-subtitle">بهترین محصولات نیک سرش</p>
+        </div>
+        <div class="products-grid">
+            {% for product in featured_products %}
+                {{ product_card(product) }}
+            {% endfor %}
+        </div>
+        <div class="section-footer">
+            <a href="{{ url_for('shop.shop') }}" class="btn btn-outline-gold">مشاهده همه محصولات</a>
+        </div>
+    </div>
+</section>
+
+<section class="section latest-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">جدیدترین محصولات</h2>
+            <p class="section-subtitle">تازه‌ترین محصولات اضافه‌شده به فروشگاه</p>
+        </div>
+        <div class="products-grid">
+            {% for product in latest_products %}
+                {{ product_card(product) }}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="{{ url_for('static', filename='js/hero3d.js') }}"></script>
+{% endblock %}

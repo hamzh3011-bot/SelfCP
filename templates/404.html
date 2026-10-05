@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}صفحه یافت نشد - نیک سرش{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="not-found">
+        <h1 class="not-found-code">۴۰۴</h1>
+        <p class="not-found-text">صفحه مورد نظر یافت نشد</p>
+        <a href="{{ url_for('shop.index') }}" class="btn btn-gold btn-lg">بازگشت به خانه</a>
+    </div>
+</div>
+{% endblock %}
