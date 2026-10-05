@@ -3,21 +3,21 @@
 {% block title %}نیک سرش - مرجع تخصصی چسب و ملزومات کاشی کاری{% endblock %}
 
 {% block content %}
-<section class="hero">
-    <canvas id="hero-canvas"></canvas>
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-        <h1 class="hero-title">نیک سرش</h1>
-        <p class="hero-subtitle">مرجع تخصصی چسب و ملزومات کاشی کاری</p>
-        <p class="hero-text">محصولات تخصصی کاشی و سرامیک با کیفیت بالا برای پروژه‌های ساختمانی و حرفه‌ای</p>
-        <div class="hero-buttons">
-            <a href="{{ url_for('shop.shop') }}" class="btn btn-gold btn-lg">مشاهده محصولات</a>
-            <a href="{{ url_for('shop.shop') }}" class="btn btn-outline-gold btn-lg">خرید آنلاین</a>
+<section class="hero-video-section" id="heroVideoSection">
+    <div class="hero-video-sticky">
+        <video id="hero-video" muted playsinline preload="auto" data-shop-url="{{ url_for('shop.shop') }}">
+            <source src="/static/uploads/hero-video.mp4" type="video/mp4">
+        </video>
+        <div class="hero-video-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">نیک سرش</h1>
+            <p class="hero-subtitle">مرجع تخصصی چسب و ملزومات کاشی کاری</p>
+            <p class="hero-text">برای ورود به فروشگاه، اسکرول کنید</p>
         </div>
-    </div>
-    <div class="hero-scroll">
-        <span>اسکرول کنید</span>
-        <div class="scroll-line"></div>
+        <div class="hero-scroll">
+            <span>اسکرول کنید</span>
+            <div class="scroll-line"></div>
+        </div>
     </div>
 </section>
 
@@ -105,5 +105,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script type="module" src="{{ url_for('static', filename='js/hero3d.js') }}"></script>
+<script src="{{ url_for('static', filename='js/hero-video.js') }}"></script>
 {% endblock %}
