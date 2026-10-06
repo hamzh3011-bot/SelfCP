@@ -65,13 +65,17 @@ document.getElementById('mobileMenuOverlay')?.addEventListener('click', () => {
 // Admin login trigger (5 clicks on logo)
 let logoClicks = 0, logoTimer;
 document.getElementById('siteLogo')?.addEventListener('click', (e) => {
+    e.preventDefault();
     logoClicks++;
     clearTimeout(logoTimer);
-    logoTimer = setTimeout(() => { logoClicks = 0; }, 800);
     if (logoClicks >= 5) {
-        e.preventDefault();
         document.getElementById('adminModal').classList.add('show');
         logoClicks = 0;
+    } else {
+        logoTimer = setTimeout(() => {
+            window.location.href = e.currentTarget.href;
+            logoClicks = 0;
+        }, 800);
     }
 });
 document.getElementById('adminModalClose')?.addEventListener('click', () => {
