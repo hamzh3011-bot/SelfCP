@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}سفارش ثبت شد - نیک سرش{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="order-success">
+        <div class="success-check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="48" height="48"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h1 class="success-title">سفارش شما با موفقیت ثبت شد</h1>
+        <p class="order-number-label">شماره سفارش:</p>
+        <p class="order-number-value">{{ order.order_number }}</p>
+        <div class="order-success-details">
+            <h3>جزئیات سفارش</h3>
+            <table class="order-table">
+                {% for item in order.items %}
+                <tr>
+                    <td>{{ item.product_name }} × {{ item.quantity }}</td>
+                    <td class="text-left">{{ "{:,}".format(item.subtotal) }} تومان</td>
+                </tr>
+                {% endfor %}
+                <tr class="order-table-total">
+                    <td>مبلغ کل</td>
+                    <td class="text-left">{{ "{:,}".format(order.total) }} تومان</td>
+                </tr>
+            </table>
+        </div>
+        <div class="order-success-actions">
+            <a href="{{ url_for('shop.shop') }}" class="btn btn-gold">ادامه خرید</a>
+            <a href="{{ url_for('shop.index') }}" class="btn btn-outline">بازگشت به خانه</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

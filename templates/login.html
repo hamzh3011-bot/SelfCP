@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}ورود - نیک سرش{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card glass">
+        <h1 class="auth-title">ورود به حساب</h1>
+        <p class="auth-subtitle">به فروشگاه نیک سرش خوش آمدید</p>
+        <form method="POST" class="auth-form">
+            <div class="form-group">
+                <label>شماره موبایل یا ایمیل</label>
+                <input type="text" name="identifier" required placeholder="شماره موبایل یا ایمیل">
+            </div>
+            <div class="form-group">
+                <label>رمز عبور</label>
+                <input type="password" name="password" required placeholder="رمز عبور">
+            </div>
+            <button type="submit" class="btn btn-gold btn-full btn-lg">ورود</button>
+        </form>
+        <p class="auth-link">حساب کاربری ندارید؟ <a href="{{ url_for('auth.register') }}">ثبت‌نام کنید</a></p>
+    </div>
+</div>
+{% endblock %}

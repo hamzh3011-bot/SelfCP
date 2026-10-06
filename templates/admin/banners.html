@@ -1,0 +1,51 @@
+{% extends "admin/base.html" %}
+{% block title %}بنر تبلیغاتی{% endblock %}
+{% block admin_header %}مدیریت بنر{% endblock %}
+
+{% block admin_content %}
+<div class="admin-panel">
+    <h3 class="admin-panel-title">افزودن بنر جدید</h3>
+    <form method="POST" action="{{ url_for('admin.banner_add') }}" enctype="multipart/form-data" class="admin-form">
+        <div class="form-group">
+            <label>عنوان</label>
+            <input type="text" name="title" placeholder="عنوان بنر">
+        </div>
+        <div class="form-group">
+            <label>متن</label>
+            <textarea name="text" rows="2" placeholder="متن بنر"></textarea>
+        </div>
+        <div class="form-group">
+            <label>لینک</label>
+            <input type="text" name="link" placeholder="/shop">
+        </div>
+        <div class="form-group">
+            <label>تصویر بنر</label>
+            <input type="file" name="image" accept="image/*" class="file-input">
+        </div>
+        <label class="form-check"><input type="checkbox" name="is_active" checked> فعال</label>
+        <button type="submit" class="btn btn-gold">افزودن بنر</button>
+    </form>
+</div>
+
+<div class="banners-list">
+    {% for banner in banners %}
+    <div class="banner-admin-card">
+        {% if banner.image_path %}
+        <img src="{{ banner.image_path }}" alt="{{ banner.title }}" class="banner-admin-img">
+        {% endif %}
+        <div class="banner-admin-info">
+            <h4>{{ banner.title or 'بدون عنوان' }}</h4>
+            <p>{{ banner.text or '' }}</p>
+            <span class="{% if banner.is_active %}badge-active{% else %}badge-inactive{% endif %}">{% if banner.is_active %}فعال{% else %}غیرفعال{% endif %}</span>
+        </div>
+        <div class="banner-admin-actions">
+            <form method="POST" action="{{ url_for('admin.banner_delete', id=banner.id) }}" onsubmit="return confirm('حذف شود؟')">
+                <button class="btn btn-danger btn-sm">حذف</button>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <p class="empty-text">بنری وجود ندارد</p>
+    {% endfor %}
+</div>
+{% endblock %}

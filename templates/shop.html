@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% from "macros.html" import product_card %}
+{% block title %}فروشگاه - نیک سرش{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="page-title">فروشگاه نیک سرش</h1>
+        <p class="page-subtitle">مرجع تخصصی چسب و ملزومات کاشی کاری</p>
+    </div>
+</div>
+
+<div class="container shop-layout">
+    <aside class="shop-sidebar">
+        <div class="filter-card">
+            <h3 class="filter-title">دسته‌بندی‌ها</h3>
+            <ul class="filter-categories">
+                <li>
+                    <a href="{{ url_for('shop.shop') }}" class="{% if not current_category %}active{% endif %}">همه محصولات</a>
+                </li>
+                {% for cat in categories %}
+                <li>
+                    <a href="{{ url_for('shop.shop', category=cat.id) }}" class="{% if current_category == cat.id %}active{% endif %}">{{ cat.name }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="filter-card">
+            <h3 class="filter-title">مرتب‌سازی</h3>
+            <form method="GET" action="{{ url_for('shop.shop') }}" class="sort-form">
+                <select name="sort" onchange="this.form.submit()" class="sort-select">
+                    <option value="newest" {% if sort == 'newest' %}selected{% endif %}>جدیدترین</option>
+                    <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>ارزان‌ترین</option>
+                    <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>گران‌ترین</option>
+                </select>
+                {% if current_category %}<input type="hidden" name="category" value="{{ current_category }}">{% endif %}
+                {% if search %}<input type="hidden" name="search" value="{{ search }}">{% endif %}
+            </form>
+        </div>
+        <div class="filter-card">
+            <h3 class="filter-title">فیلترها</h3>
+            <a href="{{ url_for('shop.shop', featured=1) }}" class="filter-link {% if featured_only %}active{% endif %}">محصولات ویژه</a>
+        </div>
+    </aside>
+
+    <div class="shop-main">
+        {% if search %}
+        <div class="shop-search-info">
+            <p>نتایج جستجو برای: <strong>{{ search }}</strong></p>
+        </div>
+        {% endif %}
+
+        {% if products %}
+        <div class="products-grid">
+            {% for product in products %}
+                {{ product_card(product) }}
+            {% endfor %}
+        </div>
+
+        {% if pagination.pages > 1 %}
+        <div class="pagination">
+            {% if pagination.has_prev %}
+            <a href="?page={{ pagination.prev_num }}{% if current_category %}&category={{ current_category }}{% endif %}{% if search %}&search={{ search }}{% endif %}{% if sort != 'newest' %}&sort={{ sort }}{% endif %}{% if featured_only %}&featured=1{% endif %}" class="page-link">قبلی</a>
+            {% endif %}
+            {% for page_num in pagination.iter_pages() %}
+                {% if page_num %}
+                    {% if page_num == pagination.page %}
+                    <span class="page-current">{{ page_num }}</span>
+                    {% else %}
+                    <a href="?page={{ page_num }}{% if current_category %}&category={{ current_category }}{% endif %}{% if search %}&search={{ search }}{% endif %}{% if sort != 'newest' %}&sort={{ sort }}{% endif %}{% if featured_only %}&featured=1{% endif %}" class="page-link">{{ page_num }}</a>
+                    {% endif %}
+                {% else %}
+                <span class="page-ellipsis">…</span>
+                {% endif %}
+            {% endfor %}
+            {% if pagination.has_next %}
+            <a href="?page={{ pagination.next_num }}{% if current_category %}&category={{ current_category }}{% endif %}{% if search %}&search={{ search }}{% endif %}{% if sort != 'newest' %}&sort={{ sort }}{% endif %}{% if featured_only %}&featured=1{% endif %}" class="page-link">بعدی</a>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="64" height="64">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+            </div>
+            <h3>محصولی یافت نشد</h3>
+            <p>لطفاً فیلترهای دیگری را امتحان کنید</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
