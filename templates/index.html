@@ -6,9 +6,12 @@
 <section class="hero-video-section" id="heroVideoSection">
     <div class="hero-video-sticky">
         <div class="hero-video-fallback" style="background-image: url('/static/uploads/hero-bg.jpg')"></div>
-        <video id="hero-video" muted playsinline preload="auto" poster="/static/uploads/hero-bg.jpg">
-            <source src="/static/uploads/hero-video.mp4" type="video/mp4">
-        </video>
+        {# Sources are chosen + fully buffered by hero-video.js (no <source> tags, to avoid a double download). #}
+        <video id="hero-video" muted playsinline preload="auto" disablepictureinpicture disableremoteplayback
+               poster="/static/uploads/hero-poster.jpg"
+               data-src-mp4="/static/uploads/hero-video.mp4"
+               data-src-webm="/static/uploads/hero-video.webm"
+               data-src-mobile="/static/uploads/hero-video-mobile.mp4"></video>
         <div class="hero-video-overlay"></div>
         <div class="hero-content" id="heroContent">
             <h1 class="hero-title">نیک سرش</h1>

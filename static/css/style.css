@@ -71,9 +71,10 @@ a { color: inherit; text-decoration: none; } img { max-width: 100%; display: blo
 #hero-video.ready { opacity: 1; }
 .hero-video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom,rgba(10,10,10,0.5) 0%,rgba(10,10,10,0.15) 30%,rgba(10,10,10,0.15) 70%,rgba(10,10,10,0.5) 100%); z-index: 2; }
 .hero-content { position: relative; z-index: 3; padding: 80px 20px; max-width: 700px; will-change: opacity,transform; }
-.hero-video-loader { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 4; width: 24px; height: 24px; border: 2px solid rgba(197,160,89,0.2); border-top-color: var(--gold); border-radius: 50%; animation: heroSpin 0.8s linear infinite; opacity: 0; transition: opacity 0.3s; }
+.hero-video-loader { position: absolute; top: 0; left: 0; z-index: 4; width: 100%; height: 2px; background: rgba(197,160,89,0.12); opacity: 0; transition: opacity 0.5s; pointer-events: none; }
+.hero-video-loader::after { content: ''; position: absolute; top: 0; right: 0; height: 100%; width: 100%; background: linear-gradient(to left,var(--gold),#F4D03F); box-shadow: 0 0 8px rgba(197,160,89,0.6); transform-origin: right; transform: scaleX(var(--p,0)); transition: transform 0.2s linear; }
 .hero-video-loader.show { opacity: 1; }
-@keyframes heroSpin { to { transform: translateX(-50%) rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .hero-video-section { height: 100vh; } }
 .hero-title { font-size: 56px; font-weight: 900; background: linear-gradient(135deg,var(--gold),#F4D03F,var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 12px; }
 .hero-subtitle { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 16px; }
 .hero-text { font-size: 16px; color: var(--gray); margin-bottom: 28px; line-height: 1.8; }
