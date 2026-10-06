@@ -5,19 +5,21 @@
 {% block content %}
 <section class="hero-video-section" id="heroVideoSection">
     <div class="hero-video-sticky">
-        <video id="hero-video" muted playsinline preload="auto" data-shop-url="{{ url_for('shop.shop') }}">
+        <div class="hero-video-fallback" style="background-image: url('/static/uploads/hero-bg.jpg')"></div>
+        <video id="hero-video" muted playsinline preload="auto" poster="/static/uploads/hero-bg.jpg">
             <source src="/static/uploads/hero-video.mp4" type="video/mp4">
         </video>
         <div class="hero-video-overlay"></div>
-        <div class="hero-content">
+        <div class="hero-content" id="heroContent">
             <h1 class="hero-title">نیک سرش</h1>
             <p class="hero-subtitle">مرجع تخصصی چسب و ملزومات کاشی کاری</p>
-            <p class="hero-text">برای ورود به فروشگاه، اسکرول کنید</p>
+            <p class="hero-text">محصولات تخصصی کاشی و سرامیک با کیفیت بالا برای پروژه‌های ساختمانی و حرفه‌ای</p>
         </div>
-        <div class="hero-scroll">
+        <div class="hero-scroll" id="heroScroll">
             <span>اسکرول کنید</span>
             <div class="scroll-line"></div>
         </div>
+        <div class="hero-video-loader" id="heroLoader"></div>
     </div>
 </section>
 
