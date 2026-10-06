@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% from "macros.html" import product_card %}
+{% block title %}{{ product.name }} - نیک سرش{% endblock %}
+
+{% block content %}
+<div class="container product-page">
+    <div class="product-layout">
+        <div class="product-gallery">
+            <div class="gallery-main">
+                {% set img = product.images | selectattr('is_primary') | first %}
+                {% if img and img.image_path %}
+                    <img src="{{ img.image_path }}" alt="{{ product.name }}" id="mainProductImage">
+                {% elif product.images %}
+                    <img src="{{ product.images[0].image_path }}" alt="{{ product.name }}" id="mainProductImage">
+                {% else %}
+                    <div class="product-image-placeholder">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.5" width="80" height="80">
+                            <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+                            <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+                        </svg>
+                    </div>
+                {% endif %}
+            </div>
+            {% if product.images | length > 1 %}
+            <div class="gallery-thumbs">
+                {% for img in product.images %}
+                <img src="{{ img.image_path }}" alt="{{ product.name }}" class="gallery-thumb" onclick="document.getElementById('mainProductImage').src=this.src">
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="product-info">
+            {% if product.category %}<span class="product-info-category">{{ product.category.name }}</span>{% endif %}
+            <h1 class="product-info-name">{{ product.name }}</h1>
+            <div class="product-info-price">
+                {% if product.discount_price %}
+                    <span class="price-old">{{ "{:,}".format(product.price) }} تومان</span>
+                    <span class="price-new">{{ "{:,}".format(product.discount_price) }} <small>تومان</small></span>
+                {% else %}
+                    <span class="price-current">{{ "{:,}".format(product.price) }} <small>تومان</small></span>
+                {% endif %}
+            </div>
+            <div class="product-info-stock {% if product.stock > 0 %}in-stock{% else %}out-of-stock{% endif %}">
+                {% if product.stock > 0 %}✓ موجود ({{ product.stock }} عدد){% else %}✗ ناموجود{% endif %}
+            </div>
+            {% if product.short_desc %}<p class="product-info-short">{{ product.short_desc }}</p>{% endif %}
+            <div class="product-info-actions">
+                <div class="quantity-selector">
+                    <button type="button" class="qty-btn" id="qtyMinus">−</button>
+                    <input type="number" value="1" min="1" max="{{ product.stock if product.stock > 0 else 1 }}" id="qtyInput" class="qty-input" readonly>
+                    <button type="button" class="qty-btn" id="qtyPlus">+</button>
+                </div>
+                <button class="btn btn-gold btn-lg add-to-cart-btn" data-product-id="{{ product.id }}" {% if product.stock == 0 %}disabled{% endif %}>افزودن به سبد</button>
+                <button class="btn btn-outline-gold btn-lg buy-now-btn" data-product-id="{{ product.id }}" {% if product.stock == 0 %}disabled{% endif %}>خرید مستقیم</button>
+            </div>
+        </div>
+    </div>
+
+    {% if product.description %}
+    <div class="product-description">
+        <h3>توضیحات محصول</h3>
+        <p>{{ product.description }}</p>
+    </div>
+    {% endif %}
+
+    {% if specs %}
+    <div class="product-specs">
+        <h3>مشخصات محصول</h3>
+        <table class="specs-table">
+            {% for key, value in specs %}
+            <tr><td class="spec-key">{{ key }}</td><td class="spec-value">{{ value }}</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+
+    {% if related_products %}
+    <section class="section related-section">
+        <h2 class="section-title">محصولات مرتبط</h2>
+        <div class="products-grid">
+            {% for p in related_products %}{{ product_card(p) }}{% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}

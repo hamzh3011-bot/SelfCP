@@ -1,0 +1,33 @@
+{% extends "admin/base.html" %}
+{% block title %}دسته‌بندی‌ها{% endblock %}
+{% block admin_header %}مدیریت دسته‌بندی‌ها{% endblock %}
+
+{% block admin_content %}
+<div class="admin-panel">
+    <h3 class="admin-panel-title">افزودن دسته‌بندی</h3>
+    <form method="POST" action="{{ url_for('admin.category_add') }}" class="inline-form">
+        <input type="text" name="name" required placeholder="نام دسته‌بندی">
+        <input type="text" name="description" placeholder="توضیحات">
+        <button type="submit" class="btn btn-gold">افزودن</button>
+    </form>
+</div>
+<table class="admin-table">
+    <thead><tr><th>نام</th><th>توضیحات</th><th>تعداد محصولات</th><th>عملیات</th></tr></thead>
+    <tbody>
+        {% for cat in categories %}
+        <tr>
+            <td>{{ cat.name }}</td>
+            <td>{{ cat.description or '—' }}</td>
+            <td>{{ cat.products|count }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('admin.category_delete', id=cat.id) }}" onsubmit="return confirm('حذف شود؟')">
+                    <button class="btn btn-danger btn-sm">حذف</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="empty-text">دسته‌بندی وجود ندارد</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

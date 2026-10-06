@@ -1,0 +1,73 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ 'ویرایش محصول' if product else 'افزودن محصول' }}{% endblock %}
+{% block admin_header %}{{ 'ویرایش محصول' if product else 'افزودن محصول' }}{% endblock %}
+
+{% block admin_content %}
+<form method="POST" enctype="multipart/form-data" class="admin-form">
+    <div class="form-row">
+        <div class="form-group">
+            <label>نام محصول *</label>
+            <input type="text" name="name" required value="{{ product.name if product else '' }}">
+        </div>
+        <div class="form-group">
+            <label>دسته‌بندی</label>
+            <select name="category_id">
+                {% for cat in categories %}
+                <option value="{{ cat.id }}" {% if product and product.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>قیمت (تومان) *</label>
+            <input type="number" name="price" required value="{{ product.price if product else '' }}">
+        </div>
+        <div class="form-group">
+            <label>قیمت تخفیف‌خورده</label>
+            <input type="number" name="discount_price" value="{{ product.discount_price if product and product.discount_price else '' }}">
+        </div>
+        <div class="form-group">
+            <label>موجودی</label>
+            <input type="number" name="stock" value="{{ product.stock if product else 0 }}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label>توضیحات کوتاه</label>
+        <input type="text" name="short_desc" value="{{ product.short_desc if product else '' }}">
+    </div>
+    <div class="form-group">
+        <label>توضیحات کامل</label>
+        <textarea name="description" rows="4">{{ product.description if product else '' }}</textarea>
+    </div>
+    <div class="form-group">
+        <label>مشخصات (هر خط: کلید: مقدار)</label>
+        <textarea name="specs" rows="4" placeholder="برند: نیک سرش&#10;وزن: ۲۰ کیلوگرم">{{ product.specs if product else '' }}</textarea>
+    </div>
+    <div class="form-group">
+        <label>تصاویر محصول</label>
+        <input type="file" name="images" multiple accept="image/*" class="file-input">
+    </div>
+    {% if product and product.images %}
+    <div class="existing-images">
+        <p>تصاویر فعلی:</p>
+        <div class="image-list">
+            {% for img in product.images %}
+            <div class="image-item">
+                <img src="{{ img.image_path }}" alt="">
+                <form method="POST" action="{{ url_for('admin.product_image_delete', product_id=product.id, image_id=img.id) }}" onsubmit="return confirm('حذف تصویر؟')">
+                    <button type="submit" class="image-delete-btn">×</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    <div class="form-checks">
+        <label class="form-check"><input type="checkbox" name="is_active" {% if not product or product.is_active %}checked{% endif %}> فعال</label>
+        <label class="form-check"><input type="checkbox" name="is_featured" {% if product and product.is_featured %}checked{% endif %}> محصول ویژه</label>
+    </div>
+    <button type="submit" class="btn btn-gold btn-lg">{{ 'ذخیره تغییرات' if product else 'افزودن محصول' }}</button>
+    <a href="{{ url_for('admin.products') }}" class="btn btn-outline">انصراف</a>
+</form>
+{% endblock %}

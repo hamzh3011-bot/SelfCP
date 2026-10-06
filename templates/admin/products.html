@@ -1,0 +1,41 @@
+{% extends "admin/base.html" %}
+{% block title %}مدیریت محصولات{% endblock %}
+{% block admin_header %}مدیریت محصولات{% endblock %}
+
+{% block admin_content %}
+<div class="admin-toolbar">
+    <a href="{{ url_for('admin.product_add') }}" class="btn btn-gold">+ افزودن محصول</a>
+</div>
+<table class="admin-table">
+    <thead><tr><th>تصویر</th><th>نام محصول</th><th>دسته‌بندی</th><th>قیمت</th><th>موجودی</th><th>وضعیت</th><th>عملیات</th></tr></thead>
+    <tbody>
+        {% for product in products %}
+        <tr>
+            <td class="admin-thumb">
+                {% if product.images %}
+                <img src="{{ product.images[0].image_path }}" alt="{{ product.name }}">
+                {% else %}
+                <div class="admin-thumb-placeholder"></div>
+                {% endif %}
+            </td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.category.name if product.category else '—' }}</td>
+            <td>{{ "{:,}".format(product.discount_price or product.price) }} ت</td>
+            <td>{{ product.stock }}</td>
+            <td>
+                {% if product.is_active %}<span class="badge-active">فعال</span>{% else %}<span class="badge-inactive">غیرفعال</span>{% endif %}
+                {% if product.is_featured %}<span class="badge-gold">ویژه</span>{% endif %}
+            </td>
+            <td class="admin-actions">
+                <a href="{{ url_for('admin.product_edit', id=product.id) }}" class="btn btn-outline btn-sm">ویرایش</a>
+                <form method="POST" action="{{ url_for('admin.product_delete', id=product.id) }}" onsubmit="return confirm('حذف شود؟')">
+                    <button class="btn btn-danger btn-sm">حذف</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="empty-text">محصولی وجود ندارد</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

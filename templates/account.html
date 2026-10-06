@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}پنل کاربری - نیک سرش{% endblock %}
+
+{% block content %}
+{% set status_map = {'pending': 'در انتظار بررسی', 'confirmed': 'تأیید شده', 'preparing': 'در حال آماده‌سازی', 'shipped': 'ارسال شده', 'delivered': 'تحویل داده شده', 'cancelled': 'لغو شده'} %}
+<div class="container">
+    <div class="page-header-sm">
+        <h1 class="page-title">پنل کاربری</h1>
+    </div>
+    <div class="account-layout">
+        <aside class="account-sidebar">
+            <div class="account-user">
+                <div class="account-avatar">{{ current_user.first_name[:1] }}</div>
+                <h3>{{ current_user.first_name }} {{ current_user.last_name }}</h3>
+                <p>{{ current_user.phone }}</p>
+            </div>
+            <nav class="account-nav">
+                <a href="#info" class="account-tab active" data-tab="info">اطلاعات حساب</a>
+                <a href="#orders" class="account-tab" data-tab="orders">سفارش‌های من</a>
+                <a href="{{ url_for('auth.logout') }}" class="account-logout">خروج از حساب</a>
+            </nav>
+        </aside>
+        <div class="account-content">
+            <div id="info" class="account-section active">
+                <h3 class="account-section-title">اطلاعات حساب</h3>
+                <form method="POST" action="{{ url_for('auth.account_edit') }}" class="account-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>نام</label>
+                            <input type="text" name="first_name" value="{{ current_user.first_name }}">
+                        </div>
+                        <div class="form-group">
+                            <label>نام خانوادگی</label>
+                            <input type="text" name="last_name" value="{{ current_user.last_name }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>شماره موبایل</label>
+                        <input type="text" value="{{ current_user.phone }}" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>ایمیل</label>
+                        <input type="email" value="{{ current_user.email }}" disabled>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>استان</label>
+                            <input type="text" name="province" value="{{ current_user.province or '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>شهر</label>
+                            <input type="text" name="city" value="{{ current_user.city or '' }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>آدرس</label>
+                        <textarea name="address" rows="2">{{ current_user.address or '' }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>کد پستی</label>
+                        <input type="text" name="postal_code" value="{{ current_user.postal_code or '' }}">
+                    </div>
+                    <button type="submit" class="btn btn-gold">به‌روزرسانی اطلاعات</button>
+                </form>
+            </div>
+            <div id="orders" class="account-section">
+                <h3 class="account-section-title">سفارش‌های من</h3>
+                {% if orders %}
+                <div class="orders-list">
+                    {% for order in orders %}
+                    <div class="order-card">
+                        <div class="order-card-header">
+                            <span class="order-card-number">{{ order.order_number }}</span>
+                            <span class="order-status status-{{ order.status }}">{{ status_map[order.status] }}</span>
+                        </div>
+                        <div class="order-card-info">
+                            <span>{{ order.created_at.strftime('%Y/%m/%d') }}</span>
+                            <span class="order-card-total">{{ "{:,}".format(order.total) }} تومان</span>
+                        </div>
+                        <div class="order-card-items">
+                            {% for item in order.items %}
+                            <span>{{ item.product_name }} × {{ item.quantity }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state-sm">
+                    <p>شما هنوز سفارشی ثبت نکرده‌اید</p>
+                    <a href="{{ url_for('shop.shop') }}" class="btn btn-outline">شروع خرید</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

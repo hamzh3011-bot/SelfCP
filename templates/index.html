@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% from "macros.html" import product_card %}
+{% block title %}نیک سرش - مرجع تخصصی چسب و ملزومات کاشی کاری{% endblock %}
+
+{% block content %}
+<section class="hero-video-section" id="heroVideoSection">
+    <div class="hero-video-sticky">
+        <div class="hero-video-fallback" style="background-image: url('/static/uploads/hero-bg.jpg')"></div>
+        {# Sources are chosen + fully buffered by hero-video.js (no <source> tags, to avoid a double download). #}
+        <video id="hero-video" muted playsinline preload="auto" disablepictureinpicture disableremoteplayback
+               poster="/static/uploads/hero-poster.jpg"
+               data-src-mp4="/static/uploads/hero-video.mp4"
+               data-src-webm="/static/uploads/hero-video.webm"
+               data-src-mobile="/static/uploads/hero-video-mobile.mp4"></video>
+        <div class="hero-video-overlay"></div>
+        {# Intro teaser: the only thing visible before the user scrolls. #}
+        <div class="hero-intro" id="heroIntro">
+            <p class="hero-intro-text">اولین سفر شما با اسکرول آغاز می‌شود</p>
+            <div class="hero-scroll" id="heroScroll">
+                <span>اسکرول کنید</span>
+                <div class="scroll-line"></div>
+            </div>
+        </div>
+        <div class="hero-content" id="heroContent">
+            <h1 class="hero-title">نیک سرش</h1>
+            <p class="hero-subtitle">مرجع تخصصی چسب و ملزومات کاشی کاری</p>
+            <p class="hero-text">محصولات تخصصی کاشی و سرامیک با کیفیت بالا برای پروژه‌های ساختمانی و حرفه‌ای</p>
+        </div>
+        <div class="hero-video-loader" id="heroLoader"></div>
+    </div>
+</section>
+
+{% if banners %}
+<section class="banner-section">
+    <div class="container">
+        {% for banner in banners %}
+        <div class="banner-card">
+            {% if banner.image_path %}
+            <div class="banner-image" style="background-image: url('{{ banner.image_path }}')"></div>
+            {% else %}
+            <div class="banner-image banner-image-default"></div>
+            {% endif %}
+            <div class="banner-content">
+                <h2 class="banner-title">{{ banner.title }}</h2>
+                <p class="banner-text">{{ banner.text }}</p>
+                {% if banner.link %}
+                <a href="{{ banner.link }}" class="btn btn-gold">مشاهده</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section class="section categories-section" id="categories">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">دسته‌بندی محصولات</h2>
+            <p class="section-subtitle">محصولات ما را بر اساس دسته‌بندی مرور کنید</p>
+        </div>
+        <div class="categories-grid">
+            {% for category in categories %}
+            <a href="{{ url_for('shop.shop', category=category.id) }}" class="category-card">
+                <div class="category-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1"/>
+                        <rect x="14" y="14" width="7" height="7" rx="1"/>
+                    </svg>
+                </div>
+                <h3 class="category-card-name">{{ category.name }}</h3>
+                {% if category.description %}
+                <p class="category-card-desc">{{ category.description }}</p>
+                {% endif %}
+                <span class="category-card-count">{{ category.products | count }} محصول</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section featured-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">محصولات ویژه</h2>
+            <p class="section-subtitle">بهترین محصولات نیک سرش</p>
+        </div>
+        <div class="products-grid">
+            {% for product in featured_products %}
+                {{ product_card(product) }}
+            {% endfor %}
+        </div>
+        <div class="section-footer">
+            <a href="{{ url_for('shop.shop') }}" class="btn btn-outline-gold">مشاهده همه محصولات</a>
+        </div>
+    </div>
+</section>
+
+<section class="section latest-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">جدیدترین محصولات</h2>
+            <p class="section-subtitle">تازه‌ترین محصولات اضافه‌شده به فروشگاه</p>
+        </div>
+        <div class="products-grid">
+            {% for product in latest_products %}
+                {{ product_card(product) }}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/hero-video.js') }}"></script>
+{% endblock %}

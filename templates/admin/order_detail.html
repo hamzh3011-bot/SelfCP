@@ -1,0 +1,59 @@
+{% extends "admin/base.html" %}
+{% block title %}جزئیات سفارش{% endblock %}
+{% block admin_header %}جزئیات سفارش {{ order.order_number }}{% endblock %}
+
+{% block admin_content %}
+<div class="admin-row">
+    <div class="admin-col-2">
+        <div class="admin-panel">
+            <h3 class="admin-panel-title">اطلاعات مشتری</h3>
+            <table class="info-table">
+                <tr><td>نام:</td><td>{{ order.first_name }} {{ order.last_name }}</td></tr>
+                <tr><td>موبایل:</td><td>{{ order.phone }}</td></tr>
+                <tr><td>ایمیل:</td><td>{{ order.email or '—' }}</td></tr>
+                <tr><td>استان:</td><td>{{ order.province }}</td></tr>
+                <tr><td>شهر:</td><td>{{ order.city }}</td></tr>
+                <tr><td>آدرس:</td><td>{{ order.address }}</td></tr>
+                <tr><td>کد پستی:</td><td>{{ order.postal_code or '—' }}</td></tr>
+                <tr><td>توضیحات:</td><td>{{ order.notes or '—' }}</td></tr>
+            </table>
+        </div>
+    </div>
+    <div class="admin-col-1">
+        <div class="admin-panel">
+            <h3 class="admin-panel-title">تغییر وضعیت</h3>
+            <form method="POST" action="{{ url_for('admin.order_status_change', id=order.id) }}">
+                <div class="form-group">
+                    <select name="status">
+                        {% for key, label in order_status.items() %}
+                        <option value="{{ key }}" {% if order.status == key %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-gold btn-full">ذخیره وضعیت</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="admin-panel">
+    <h3 class="admin-panel-title">اقلام سفارش</h3>
+    <table class="admin-table">
+        <thead><tr><th>محصول</th><th>قیمت واحد</th><th>تعداد</th><th>مبلغ کل</th></tr></thead>
+        <tbody>
+            {% for item in order.items %}
+            <tr>
+                <td>{{ item.product_name }}</td>
+                <td>{{ "{:,}".format(item.discount_price or item.price) }} ت</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ "{:,}".format(item.subtotal) }} ت</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr><td colspan="3" class="text-left">مبلغ نهایی:</td><td class="total-cell">{{ "{:,}".format(order.total) }} تومان</td></tr>
+        </tfoot>
+    </table>
+</div>
+<a href="{{ url_for('admin.orders') }}" class="btn btn-outline">بازگشت</a>
+{% endblock %}
