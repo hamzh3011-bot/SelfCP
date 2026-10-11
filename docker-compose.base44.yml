@@ -1,0 +1,57 @@
+# Base44 sandbox environment for SelfCP.
+#
+# SelfCP is a GPU-only research pipeline (prompt compression for LLM
+# summarisation / QA / in-context learning). Two things follow from that:
+#
+#   1. The project has NO web server. Nothing listens on port 3000, so the
+#      Base44 preview cannot render this project - it will stay on its loading
+#      screen. That is expected, not a broken stack.
+#
+#   2. The pipeline itself needs assets that are NOT part of this repository
+#      and are referenced by absolute paths in config-blue.yaml / main.py:
+#        * 4 CUDA GPUs            (main.sh: torchrun --nproc_per_node=4,
+#                                  config: synced: True -> NCCL init)
+#        * LLM weights            (/data1/gj/BlueLM, /data1/gj/vicuna-7b-v1.3, ...)
+#        * ~20 dataset JSON files (/data1/gj/PromptCompression/dataset/*.json, ...)
+#        * trained checkpoints    (/data1/gj/PromptCompression/savedModels-multi-blue/...)
+#        * a prompt-compression file loaded unconditionally by main.py
+#                                 (/data1/gj/PromptCompression/promptcompressor/promptcompressor_bluelm_duc.json)
+#
+# This stack therefore provides only what CAN run in the sandbox: the project's
+# runtime environment (its source, live-mounted, plus its dependencies). Use it
+# with `docker compose run` / `exec` to work on the code, and see AGENTS.md.
+
+name: selfcp
+
+services:
+  runtime:
+    image: python:3.11-slim
+    working_dir: /app
+    restart: on-failure
+    volumes:
+      # Live source mount: edits in the sandbox are visible immediately.
+      - ./:/app
+    environment:
+      - PIP_DISABLE_PIP_VERSION_CHECK=1
+      - PYTHONUNBUFFERED=1
+      # Passed through from the platform (bare name = value inherited).
+      - BASE44_PREVIEW_MODE
+    command:
+      - sh
+      - -ec
+      - |
+        # Sandbox has no GPU, so resolve torch from the CPU wheel index to keep
+        # the download small. On a GPU host install the default (CUDA) build.
+        pip install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt
+        exec sleep infinity
+    healthcheck:
+      # Proves the environment actually works: every dependency the project
+      # imports at startup must be importable. This replaces a port probe,
+      # because the project exposes no HTTP endpoint.
+      test:
+        - CMD-SHELL
+        - python -c "import torch, transformers, fastchat, calflops, ruamel.yaml, tensorboardX, numpy, tqdm"
+      interval: 30s
+      timeout: 20s
+      start_period: 600s
+      retries: 3

@@ -1,0 +1,15 @@
+# Dependencies of the SelfCP training/inference pipeline, derived from the
+# imports in main.py, Trainer.py, ModelModuleLLama.py, ModelModuleBlue.py,
+# DatasetModule.py and utils.py (the repository ships no manifest of its own).
+#
+# Note: the PyPI package providing `import fastchat` is `fschat`.
+torch
+transformers<5
+fschat
+calflops
+# main.py does `yaml.load(open(cfg), Loader=yaml.Loader)`, the legacy API that
+# ruamel.yaml removed in 0.18 -> the config cannot be parsed with 0.18+.
+ruamel.yaml<0.18
+tensorboardX
+tqdm
+numpy<2
