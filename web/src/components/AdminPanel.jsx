@@ -1,5 +1,15 @@
 import { useEffect, useState } from 'react'
-import { removeById, resetSite, setBrand, useSiteContent } from '../data/siteStore'
+import {
+  checkAdminSession,
+  loadInbox,
+  loginAdmin,
+  logoutAdmin,
+  removeById,
+  resetSite,
+  setBrand,
+  setupAdmin,
+  useSiteContent,
+} from '../data/siteStore'
 import CollectionEditor from './CollectionEditor'
 import { Icon, Logo } from './Icons'
 
@@ -23,6 +33,114 @@ function faDate(iso) {
 function faStamp(ts) {
   const date = new Date(ts)
   return Number.isNaN(date.getTime()) ? '—' : date.toLocaleString('fa-IR', { dateStyle: 'short', timeStyle: 'short' })
+}
+
+function SaveBadge({ saving }) {
+  if (saving === 'saving') return <span className="admin-save">در حال ذخیره…</span>
+  if (saving === 'saved') return <span className="admin-save is-ok">ذخیره شد</span>
+  if (saving === 'error') return <span className="admin-save is-error">ذخیره نشد</span>
+  return null
+}
+
+/** First-run password setup, or the login form once a password exists. */
+function AdminAuth({ configured }) {
+  const [password, setPassword] = useState('')
+  const [confirm, setConfirm] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+
+  const submit = async (event) => {
+    event.preventDefault()
+    setError('')
+    if (password.length < 6) {
+      setError('رمز عبور باید حداقل ۶ کاراکتر باشد.')
+      return
+    }
+    if (!configured && password !== confirm) {
+      setError('تکرار رمز عبور یکسان نیست.')
+      return
+    }
+    setBusy(true)
+    try {
+      if (configured) await loginAdmin(password)
+      else await setupAdmin(password)
+      setPassword('')
+      setConfirm('')
+    } catch (err) {
+      setError(err && err.message ? err.message : 'ورود ناموفق بود.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  if (configured === null) {
+    return (
+      <div className="admin-auth">
+        <p className="text-sm text-ink-soft">در حال بررسی وضعیت پنل…</p>
+        <button type="button" className="btn btn-ghost btn-sm" onClick={() => void checkAdminSession()}>
+          تلاش دوباره
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <form className="admin-auth" onSubmit={submit}>
+      <span className="admin-auth-mark">
+        <Icon name="lock" size={22} />
+      </span>
+      <h3 className="text-base font-bold">
+        {configured ? 'ورود به پنل مدیریت' : 'تعیین رمز عبور مدیریت'}
+      </h3>
+      <p className="text-sm text-ink-soft">
+        {configured
+          ? 'برای ویرایش محتوای سایت، رمز عبور مدیریت را وارد کنید.'
+          : 'رمز عبور را همین حالا تعیین کنید. از این پس فقط با این رمز می‌توان محتوای سایت را تغییر داد.'}
+      </p>
+
+      <div className="admin-field">
+        <label className="field-label" htmlFor="admin-password">
+          رمز عبور
+        </label>
+        <input
+          id="admin-password"
+          type="password"
+          className="field-control"
+          dir="ltr"
+          autoComplete={configured ? 'current-password' : 'new-password'}
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+        />
+      </div>
+
+      {!configured && (
+        <div className="admin-field">
+          <label className="field-label" htmlFor="admin-password-confirm">
+            تکرار رمز عبور
+          </label>
+          <input
+            id="admin-password-confirm"
+            type="password"
+            className="field-control"
+            dir="ltr"
+            autoComplete="new-password"
+            value={confirm}
+            onChange={(event) => setConfirm(event.target.value)}
+          />
+        </div>
+      )}
+
+      {error && (
+        <p className="admin-alert" role="alert">
+          {error}
+        </p>
+      )}
+
+      <button type="submit" className="btn btn-primary" disabled={busy}>
+        {busy ? 'در حال بررسی…' : configured ? 'ورود' : 'تعیین رمز و ورود'}
+      </button>
+    </form>
+  )
 }
 
 function BrandTab({ brand }) {
@@ -89,7 +207,7 @@ function BrandTab({ brand }) {
       </div>
 
       <p className="text-xs text-ink-soft">
-        نام سایت بلافاصله در لوگو، فوتر و عنوان مرورگر به‌روز می‌شود.
+        نام سایت بلافاصله در لوگو، فوتر و عنوان مرورگر به‌روز می‌شود و روی سرور ذخیره می‌شود.
       </p>
     </div>
   )
@@ -111,7 +229,7 @@ function BookingsTab({ bookings }) {
             <button
               type="button"
               className="admin-danger"
-              onClick={() => removeById('bookings', booking.id)}
+              onClick={() => void removeById('bookings', booking.id)}
               aria-label="حذف رزرو"
             >
               <Icon name="trash" size={16} />
@@ -163,7 +281,7 @@ function SubscribersTab({ subscribers }) {
           <button
             type="button"
             className="admin-danger"
-            onClick={() => removeById('subscribers', item.id)}
+            onClick={() => void removeById('subscribers', item.id)}
             aria-label="حذف عضو خبرنامه"
           >
             <Icon name="trash" size={16} />
@@ -177,8 +295,10 @@ function SubscribersTab({ subscribers }) {
 
 export default function AdminPanel({ open, onClose }) {
   const content = useSiteContent()
+  const { status } = content
   const [tab, setTab] = useState('brand')
   const [confirmReset, setConfirmReset] = useState(false)
+  const authed = status.adminAuthed
 
   // Escape closes the panel and the page behind it stays put while it is open.
   useEffect(() => {
@@ -200,7 +320,25 @@ export default function AdminPanel({ open, onClose }) {
     if (!open) setConfirmReset(false)
   }, [open])
 
+  // Ask the server whether an admin password has been set yet.
+  useEffect(() => {
+    if (open && status.adminConfigured === null) void checkAdminSession()
+  }, [open, status.adminConfigured])
+
+  // The inboxes live on the server and keep filling while the panel is shut,
+  // so every time it opens the panel pulls the current lists.
+  useEffect(() => {
+    if (open && status.adminAuthed) void loadInbox()
+  }, [open, status.adminAuthed])
+
   if (!open) return null
+
+  const handleReset = () => {
+    setConfirmReset(false)
+    void resetSite().catch(() => {
+      // The store already put the failure in status.error.
+    })
+  }
 
   return (
     <div className="admin-overlay" role="dialog" aria-modal="true" aria-label="پنل مدیریت">
@@ -212,114 +350,136 @@ export default function AdminPanel({ open, onClose }) {
             </span>
             <div>
               <h2 className="text-base font-bold">پنل مدیریت {content.brand.name}</h2>
-              <p className="text-xs text-ink-soft">هر تغییر بلافاصله روی سایت ذخیره می‌شود.</p>
+              <p className="text-xs text-ink-soft">
+                {authed
+                  ? 'هر تغییر روی سرور ذخیره می‌شود و همه آن را می‌بینند.'
+                  : 'برای ویرایش محتوای سایت، رمز عبور مدیریت را وارد کنید.'}
+              </p>
             </div>
           </div>
-          <button type="button" className="admin-close" onClick={onClose} aria-label="بستن پنل مدیریت">
-            <Icon name="close" size={20} />
-          </button>
+          <div className="flex items-center gap-2">
+            {authed && <SaveBadge saving={status.saving} />}
+            <button type="button" className="admin-close" onClick={onClose} aria-label="بستن پنل مدیریت">
+              <Icon name="close" size={20} />
+            </button>
+          </div>
         </header>
 
-        <nav className="admin-tabs" aria-label="بخش‌های پنل مدیریت">
-          {TABS.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className={`admin-tab${tab === item.id ? ' is-active' : ''}`}
-              onClick={() => setTab(item.id)}
-            >
-              <Icon name={item.icon} size={17} />
-              {item.label}
-            </button>
-          ))}
-        </nav>
+        {authed && (
+          <nav className="admin-tabs" aria-label="بخش‌های پنل مدیریت">
+            {TABS.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className={`admin-tab${tab === item.id ? ' is-active' : ''}`}
+                onClick={() => setTab(item.id)}
+              >
+                <Icon name={item.icon} size={17} />
+                {item.label}
+              </button>
+            ))}
+          </nav>
+        )}
 
         <div className="admin-body">
-          {tab === 'brand' && <BrandTab brand={content.brand} />}
-
-          {tab === 'destinations' && (
-            <CollectionEditor
-              collection="destinations"
-              addLabel="افزودن مقصد"
-              blank={{ name: '', country: '', price: '', image: '/media/destination-dubai.jpg' }}
-              fields={[
-                { key: 'name', label: 'نام مقصد' },
-                { key: 'country', label: 'کشور' },
-                { key: 'price', label: 'شروع قیمت (تومان)' },
-                { key: 'image', label: 'نشانی تصویر', dir: 'ltr' },
-              ]}
-            />
+          {status.error && (
+            <p className="admin-alert" role="alert">
+              {status.error}
+            </p>
           )}
 
-          {tab === 'packages' && (
-            <CollectionEditor
-              collection="packages"
-              addLabel="افزودن تور"
-              blank={{
-                title: '',
-                duration: '',
-                hotel: '',
-                rating: '۵',
-                price: '',
-                image: '/media/package-dubai.jpg',
-                cta: 'مشاهده تور',
-              }}
-              fields={[
-                { key: 'title', label: 'عنوان تور' },
-                { key: 'duration', label: 'مدت سفر' },
-                { key: 'hotel', label: 'هتل' },
-                { key: 'rating', label: 'امتیاز' },
-                { key: 'price', label: 'قیمت (تومان)' },
-                { key: 'image', label: 'نشانی تصویر', dir: 'ltr' },
-                { key: 'cta', label: 'متن دکمه' },
-              ]}
-            />
+          {!authed ? (
+            <AdminAuth configured={status.adminConfigured} />
+          ) : (
+            <>
+              {tab === 'brand' && <BrandTab brand={content.brand} />}
+
+              {tab === 'destinations' && (
+                <CollectionEditor
+                  collection="destinations"
+                  addLabel="افزودن مقصد"
+                  blank={{ name: '', country: '', price: '', image: '/media/destination-dubai.jpg' }}
+                  fields={[
+                    { key: 'name', label: 'نام مقصد' },
+                    { key: 'country', label: 'کشور' },
+                    { key: 'price', label: 'شروع قیمت (تومان)' },
+                    { key: 'image', label: 'نشانی تصویر', dir: 'ltr' },
+                  ]}
+                />
+              )}
+
+              {tab === 'packages' && (
+                <CollectionEditor
+                  collection="packages"
+                  addLabel="افزودن تور"
+                  blank={{
+                    title: '',
+                    duration: '',
+                    hotel: '',
+                    rating: '۵',
+                    price: '',
+                    image: '/media/package-dubai.jpg',
+                    cta: 'مشاهده تور',
+                  }}
+                  fields={[
+                    { key: 'title', label: 'عنوان تور' },
+                    { key: 'duration', label: 'مدت سفر' },
+                    { key: 'hotel', label: 'هتل' },
+                    { key: 'rating', label: 'امتیاز' },
+                    { key: 'price', label: 'قیمت (تومان)' },
+                    { key: 'image', label: 'نشانی تصویر', dir: 'ltr' },
+                    { key: 'cta', label: 'متن دکمه' },
+                  ]}
+                />
+              )}
+
+              {tab === 'testimonials' && (
+                <CollectionEditor
+                  collection="testimonials"
+                  addLabel="افزودن نظر"
+                  blank={{ name: '', destination: '', rating: '۵', text: '', avatar: '/media/avatar-1.jpg' }}
+                  fields={[
+                    { key: 'name', label: 'نام مسافر' },
+                    { key: 'destination', label: 'مقصد سفر' },
+                    { key: 'rating', label: 'امتیاز' },
+                    { key: 'avatar', label: 'نشانی تصویر', dir: 'ltr' },
+                    { key: 'text', label: 'متن نظر', multiline: true },
+                  ]}
+                />
+              )}
+
+              {tab === 'bookings' && <BookingsTab bookings={content.bookings} />}
+
+              {tab === 'subscribers' && <SubscribersTab subscribers={content.subscribers} />}
+            </>
           )}
-
-          {tab === 'testimonials' && (
-            <CollectionEditor
-              collection="testimonials"
-              addLabel="افزودن نظر"
-              blank={{ name: '', destination: '', rating: '۵', text: '', avatar: '/media/avatar-1.jpg' }}
-              fields={[
-                { key: 'name', label: 'نام مسافر' },
-                { key: 'destination', label: 'مقصد سفر' },
-                { key: 'rating', label: 'امتیاز' },
-                { key: 'avatar', label: 'نشانی تصویر', dir: 'ltr' },
-                { key: 'text', label: 'متن نظر', multiline: true },
-              ]}
-            />
-          )}
-
-          {tab === 'bookings' && <BookingsTab bookings={content.bookings} />}
-
-          {tab === 'subscribers' && <SubscribersTab subscribers={content.subscribers} />}
         </div>
 
         <footer className="admin-foot">
           <p className="text-xs text-ink-soft">
             برای باز کردن پنل، پنج بار روی نام سایت در نوار بالا بزنید.
           </p>
-          {confirmReset ? (
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                className="btn btn-primary btn-sm"
-                onClick={() => {
-                  resetSite()
-                  setConfirmReset(false)
-                }}
-              >
-                بله، بازنشانی کن
-              </button>
-              <button type="button" className="btn btn-ghost btn-sm" onClick={() => setConfirmReset(false)}>
-                انصراف
+
+          {authed && (
+            <div className="flex flex-wrap items-center gap-2">
+              {confirmReset ? (
+                <>
+                  <button type="button" className="btn btn-primary btn-sm" onClick={handleReset}>
+                    بله، بازنشانی کن
+                  </button>
+                  <button type="button" className="btn btn-ghost btn-sm" onClick={() => setConfirmReset(false)}>
+                    انصراف
+                  </button>
+                </>
+              ) : (
+                <button type="button" className="btn btn-ghost btn-sm" onClick={() => setConfirmReset(true)}>
+                  بازنشانی به حالت اولیه
+                </button>
+              )}
+              <button type="button" className="btn btn-ghost btn-sm" onClick={() => void logoutAdmin()}>
+                خروج از پنل
               </button>
             </div>
-          ) : (
-            <button type="button" className="btn btn-ghost btn-sm" onClick={() => setConfirmReset(true)}>
-              بازنشانی به حالت اولیه
-            </button>
           )}
         </footer>
       </div>

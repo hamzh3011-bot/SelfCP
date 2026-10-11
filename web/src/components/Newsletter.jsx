@@ -14,13 +14,24 @@ const layers = [
 export default function Newsletter() {
   const [email, setEmail] = useState('')
   const [done, setDone] = useState(false)
+  const [error, setError] = useState('')
+  const [busy, setBusy] = useState(false)
 
-  const submit = (event) => {
+  const submit = async (event) => {
     event.preventDefault()
-    if (!email.trim()) return
-    // Subscribers are listed in the admin panel.
-    addSubscriber(email)
-    setDone(true)
+    if (!email.trim() || busy) return
+    setError('')
+    setBusy(true)
+    try {
+      // The address is stored on the server, so the admin panel sees signups
+      // from every visitor — not just from this browser.
+      await addSubscriber(email)
+      setDone(true)
+    } catch (err) {
+      setError((err && err.message) || 'ثبت عضویت انجام نشد. لطفاً دوباره تلاش کنید.')
+    } finally {
+      setBusy(false)
+    }
   }
 
   return (
@@ -48,21 +59,21 @@ export default function Newsletter() {
                   onChange={(event) => setEmail(event.target.value)}
                   style={{ background: '#fff' }}
                 />
-                <button type="submit" className="btn btn-primary">
+                <button type="submit" className="btn btn-primary" disabled={busy}>
                   {newsletter.cta}
                 </button>
               </div>
 
               <p
                 className={`mt-4 flex items-center justify-center gap-2 text-sm transition-opacity duration-500 ${
-                  done ? 'opacity-100' : 'opacity-0'
+                  done || error ? 'opacity-100' : 'opacity-0'
                 }`}
-                style={{ color: 'var(--color-aero-700)' }}
+                style={{ color: error ? '#b4372f' : 'var(--color-aero-700)' }}
                 role="status"
                 aria-live="polite"
               >
-                <Icon name="sparkle" size={17} />
-                {done ? 'عضویت شما ثبت شد. پیشنهادهای ویژهٔ سفر برایتان ارسال می‌شود.' : '\u00A0'}
+                <Icon name={error ? 'close' : 'sparkle'} size={17} />
+                {error || (done ? 'عضویت شما ثبت شد. پیشنهادهای ویژهٔ سفر برایتان ارسال می‌شود.' : '\u00A0')}
               </p>
             </form>
           </div>

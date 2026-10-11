@@ -1,13 +1,62 @@
 # Base44 sandbox environment for the Asemaneh (آسمانه) website.
 #
-# The site is a Vite + React single-page app with no backend and no external
-# service, so this stack is a single service that runs the Vite dev server
-# straight from the cloned source (never from a prebuilt image), which keeps
-# live reload working for every later edit.
+# The site is a Vite + React single-page app whose content lives on a small
+# Node API backed by Postgres, so admin-panel edits are seen by every visitor.
+# Every app service runs from the cloned source (never from a prebuilt image),
+# which keeps live reload working for later edits.
 #
 #   docker compose -f docker-compose.base44.yml up -d --build
 #
 services:
+  db:
+    image: postgres:16-alpine
+    restart: on-failure
+    environment:
+      # Local development database: credentials generated here, not a user
+      # secret. Move to a hosted Postgres by pointing the api's DATABASE_URL
+      # at it instead.
+      - POSTGRES_USER=asemaneh
+      - POSTGRES_PASSWORD=asemaneh-dev
+      - POSTGRES_DB=asemaneh
+    volumes:
+      - asemaneh-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U asemaneh -d asemaneh']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  api:
+    image: node:22
+    working_dir: /app
+    restart: on-failure
+    volumes:
+      - ./api:/app
+    environment:
+      - PORT=8000
+      - DATABASE_URL=postgres://asemaneh:asemaneh-dev@db:5432/asemaneh
+    # Unpublished on purpose: the browser only ever talks to the web service,
+    # which proxies /api here.
+    depends_on:
+      db:
+        condition: service_healthy
+    # Dependencies are installed at startup (after the bind mount exists), then
+    # the API takes over. It creates its tables on boot.
+    command: ['sh', '-ec', 'CI=true npm install --no-audit --no-fund && exec node server.js']
+    healthcheck:
+      # Reads the public content endpoint, so a healthy container proves the
+      # API answers all the way through to Postgres.
+      test:
+        - CMD-SHELL
+        - >-
+          node -e "fetch('http://127.0.0.1:8000/api/content').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      # First boot installs pg and waits for Postgres to accept connections.
+      start_period: 120s
+
   web:
     image: node:22
     working_dir: /app
@@ -22,6 +71,11 @@ services:
       - BASE44_PREVIEW_MODE
       - BASE44_SANDBOX_HOST_DOMAIN
       - BASE44_PUBLIC_HOST_SUFFIX
+      # The dev server proxies /api to the API service (see vite.config.js).
+      - API_PROXY_TARGET=http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
     # Dependencies are installed at startup (after the bind mount exists), then
     # the dev server takes over. --no-audit/--no-fund keep it quiet and fast.
     command: ['sh', '-ec', 'CI=true npm install --no-audit --no-fund && exec npm run dev -- --host 0.0.0.0 --port 5173']
@@ -36,3 +90,6 @@ services:
       retries: 5
       # First boot installs the npm dependencies, which takes a moment.
       start_period: 150s
+
+volumes:
+  asemaneh-db:

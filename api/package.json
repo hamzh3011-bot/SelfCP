@@ -1,0 +1,13 @@
+{
+  "name": "asemaneh-api",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Content + admin API for the Asemaneh website.",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "pg": "^8.13.1"
+  }
+}

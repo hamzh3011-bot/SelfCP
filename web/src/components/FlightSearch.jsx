@@ -26,8 +26,10 @@ export default function FlightSearch() {
 
   const submit = (event) => {
     event.preventDefault()
-    // Every search is filed in the admin panel's bookings inbox.
-    addBooking({ from, to, depart, back, passengers, cabin })
+    // Every search is filed on the server for the admin panel's bookings inbox.
+    addBooking({ from, to, depart, back, passengers, cabin }).catch((error) => {
+      console.warn('booking request failed', error)
+    })
     const when = depart ? ` برای تاریخ ${depart}` : ''
     setStatus(`در حال آماده‌سازی پروازهای ${from} به ${to}${when}، ${passengers}، کلاس ${cabin}.`)
   }

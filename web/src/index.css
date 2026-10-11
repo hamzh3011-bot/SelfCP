@@ -1025,6 +1025,73 @@ input[type='date'].field-control::-webkit-calendar-picker-indicator {
   resize: vertical;
   line-height: 1.85;
 }
+.admin-save {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: var(--color-aero-100);
+  color: var(--color-aero-700);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.admin-save.is-ok {
+  background: #eafaf1;
+  color: #1f7a4d;
+}
+.admin-save.is-error {
+  background: #fff6f6;
+  color: #b4372f;
+}
+.admin-alert {
+  margin: 0 0 1rem;
+  padding: 0.7rem 1rem;
+  border: 1px solid #f0c2c2;
+  border-radius: 16px;
+  background: #fff6f6;
+  color: #b4372f;
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
+.admin-auth {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: stretch;
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 1.6rem;
+  border: 1px solid var(--color-cloudgray);
+  border-radius: 26px;
+  background: #fff;
+  box-shadow: 0 20px 45px -38px rgb(23 43 58 / 0.5);
+  text-align: center;
+}
+.admin-auth-mark {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin-inline: auto;
+  border-radius: 16px;
+  background: var(--color-aero-100);
+  color: var(--color-aero-700);
+}
+.admin-auth .admin-field {
+  text-align: start;
+}
+.admin-auth .admin-alert {
+  margin: 0;
+}
+.admin-auth .btn {
+  width: 100%;
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
 
 @media (max-width: 640px) {
   .admin-overlay {
