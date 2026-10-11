@@ -1,11 +1,35 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { navLinks } from '../data/content'
+import { useSiteContent } from '../data/siteStore'
 import { Icon, Logo } from './Icons'
 
-export default function Navbar() {
+// Five taps on the brand mark open the hidden admin panel. The run resets
+// after a short pause so ordinary single clicks can never accumulate.
+const SECRET_TAPS = 5
+const TAP_WINDOW = 900
+
+export default function Navbar({ onSecretOpen }) {
+  const { brand } = useSiteContent()
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState('#hero')
+  const taps = useRef({ count: 0, timer: null })
+
+  const registerBrandTap = () => {
+    const state = taps.current
+    state.count += 1
+    clearTimeout(state.timer)
+    if (state.count >= SECRET_TAPS) {
+      state.count = 0
+      onSecretOpen?.()
+      return
+    }
+    state.timer = setTimeout(() => {
+      state.count = 0
+    }, TAP_WINDOW)
+  }
+
+  useEffect(() => () => clearTimeout(taps.current.timer), [])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -43,8 +67,13 @@ export default function Navbar() {
     <>
       <header className={`nav${scrolled ? ' is-scrolled' : ''}`}>
         <div className="nav-inner">
-          <a href="#hero" className="shrink-0" aria-label="آسمانه — صفحه اصلی">
-            <Logo tone={scrolled ? 'dark' : 'light'} />
+          <a
+            href="#hero"
+            className="shrink-0"
+            aria-label={`${brand.name} — صفحه اصلی`}
+            onClick={registerBrandTap}
+          >
+            <Logo tone={scrolled ? 'dark' : 'light'} name={brand.name} latin={brand.latin} />
           </a>
 
           <nav className="mx-auto hidden items-center gap-0.5 lg:flex" aria-label="ناوبری اصلی">

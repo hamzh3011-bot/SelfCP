@@ -26,6 +26,9 @@ const ICONS = {
   globe: ['M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z', 'M3.4 12h17.2', 'M12 3c2.3 2.4 3.6 5.5 3.6 9s-1.3 6.6-3.6 9c-2.3-2.4-3.6-5.5-3.6-9S9.7 5.4 12 3Z'],
   sparkle: ['M12 3.4l1.7 4.6 4.6 1.7-4.6 1.7L12 16l-1.7-4.6-4.6-1.7 4.6-1.7L12 3.4Z', 'M18.6 15.4l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8.8-2Z'],
   users: ['M15.6 19.6v-1.7a3.4 3.4 0 0 0-3.4-3.4H7.4A3.4 3.4 0 0 0 4 17.9v1.7', 'M9.8 11.1a3.4 3.4 0 1 0 0-6.8 3.4 3.4 0 0 0 0 6.8Z', 'M20 19.6v-1.7a3.4 3.4 0 0 0-2.6-3.3', 'M15.2 4.5a3.4 3.4 0 0 1 0 6.6'],
+  plus: ['M12 5.6v12.8', 'M5.6 12h12.8'],
+  trash: ['M4.8 7h14.4', 'M9.6 7V5.5a1.4 1.4 0 0 1 1.4-1.4h2a1.4 1.4 0 0 1 1.4 1.4V7', 'M6.4 7l.9 12.2a1.6 1.6 0 0 0 1.6 1.5h6.2a1.6 1.6 0 0 0 1.6-1.5L17.6 7'],
+  sliders: ['M4.6 7.6h14.8', 'M4.6 16.4h14.8', 'M9.4 7.6a1.9 1.9 0 1 0 0-3.8 1.9 1.9 0 0 0 0 3.8Z', 'M15.2 20.2a1.9 1.9 0 1 0 0-3.8 1.9 1.9 0 0 0 0 3.8Z'],
 }
 
 const FILLED = {
@@ -74,7 +77,7 @@ export function Icon({ name, size = 24, className = '', style }) {
 }
 
 /** Brand mark: a wing lifting out of a cloud deck. */
-export function Logo({ tone = 'light' }) {
+export function Logo({ tone = 'light', name = 'آسمانه', latin = 'ASEMANEH' }) {
   const ink = tone === 'dark' ? '#172B3A' : '#FFFFFF'
   return (
     <span className="flex items-center gap-2.5">
@@ -93,13 +96,13 @@ export function Logo({ tone = 'light' }) {
       </svg>
       <span className="flex flex-col leading-none">
         <span className="text-[1.075rem] font-bold tracking-tight" style={{ color: ink }}>
-          آسمانه
+          {name}
         </span>
         <span
           className="mt-0.5 text-[0.5rem] font-semibold"
           style={{ color: ink, opacity: 0.55, letterSpacing: '0.28em' }}
         >
-          ASEMANEH
+          {latin}
         </span>
       </span>
     </span>

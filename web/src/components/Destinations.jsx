@@ -1,10 +1,11 @@
 import { useCallback, useRef, useState } from 'react'
-import { destinations } from '../data/content'
+import { useSiteContent } from '../data/siteStore'
 import { Icon } from './Icons'
 import Reveal from './Reveal'
 import SectionHeading from './SectionHeading'
 
 export default function Destinations() {
+  const { destinations } = useSiteContent()
   const railRef = useRef(null)
   const [index, setIndex] = useState(0)
 
@@ -43,9 +44,9 @@ export default function Destinations() {
 
       <Reveal delay={180} className="mt-12">
         <div ref={railRef} className="rail pe-[var(--gutter)] ps-[var(--gutter)]">
-          {destinations.map((destination) => (
+          {destinations.map((destination, cardIndex) => (
             <a
-              key={destination.name}
+              key={`${destination.name}-${cardIndex}`}
               href="#packages"
               className="dest-card"
               style={{ width: 'clamp(240px, 72vw, 336px)', aspectRatio: '2 / 3' }}

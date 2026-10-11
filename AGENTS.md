@@ -64,9 +64,33 @@ nothing to migrate or seed.
 - **Persian digits**: the stats counters format with `toLocaleString('fa-IR')`.
   Anything comparing a Persian numeral must convert first (see
   `toLatinNumber` in `Testimonials.jsx`).
+- **The admin panel is a five-tap secret on the brand mark.** In
+  `web/src/components/Navbar.jsx` five taps on the logo anchor (each within
+  900 ms of the last) call `onSecretOpen`, which `App.jsx` turns into
+  `<AdminPanel />`. `AdminPanel.jsx` holds the tabs and `CollectionEditor.jsx`
+  is the generic add/edit/delete list behind مقاصد، تورها and نظرات مسافران.
+- **`web/src/data/siteStore.js` is the content store.** It is a
+  `useSyncExternalStore` store that layers every admin edit over the static
+  defaults in `content.js` and persists the result to `localStorage` under
+  `asemaneh.site.v1`. An absent key means "shipped defaults", so deleting the
+  key is a valid reset; the panel's «بازنشانی به حالت اولیه» does the same
+  through the store. The panel also reads the two inboxes the site's own forms
+  fill — `FlightSearch.jsx` → bookings, `Newsletter.jsx` → subscribers.
+- **A rename is not a find-and-replace.** Short brand labels in component copy
+  go through `branded(text, brand)`, which swaps the shipped name for the
+  current one, and every editable collection is read with `useSiteContent()`.
+  Anything still importing a value straight from `content.js` will not follow a
+  rename.
+- **There is no backend, so `localStorage` is the only persistence layer** —
+  admin edits live in one browser on one device and are not visible to other
+  visitors. The managed preview browser also resets page storage before each
+  fresh load, so a rename's reload-survival can only be checked by hand in a
+  normal browser; the write/read round-trip inside a session is what the
+  preview can prove.
 - Design tokens (sky blues, ink, radii, shadows) are declared once in
   `src/index.css` under `@theme`; Tailwind v4 turns them into utilities such as
-  `text-ink`, `bg-mist`, `shadow-soft`.
+  `text-ink`, `bg-mist`, `shadow-soft`. The admin panel's own classes
+  (`.admin-overlay`, `.admin-tab`, `.admin-card`, …) live in the same file.
 
 ## Verifying it works
 
@@ -82,3 +106,10 @@ behavioural in the preview browser:
    newsletter form each show their inline confirmation; the FAQ accordion opens
    one answer at a time; the destination rail scrolls with its arrows; at mobile
    width the menu opens and no horizontal scrolling appears.
+3. The admin panel: tap the brand mark in the navbar five times (four taps must
+   leave it closed). Its six tabs are برند و تنظیمات، مقاصد، تورها، نظرات
+   مسافران، رزروها، خبرنامه; renaming the site updates the navbar logo, the
+   footer, the browser title and the copy that names the brand
+   (`چرا <نام>`، `خدمات <نام>`). Submitting the flight search and the newsletter
+   form should make a record appear in the رزروها and خبرنامه tabs, and deleting
+   it there should empty them again.

@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { searchFields } from '../data/content'
+import { addBooking } from '../data/siteStore'
 import { Icon } from './Icons'
 
 const today = new Date().toISOString().slice(0, 10)
@@ -25,6 +26,8 @@ export default function FlightSearch() {
 
   const submit = (event) => {
     event.preventDefault()
+    // Every search is filed in the admin panel's bookings inbox.
+    addBooking({ from, to, depart, back, passengers, cabin })
     const when = depart ? ` برای تاریخ ${depart}` : ''
     setStatus(`در حال آماده‌سازی پروازهای ${from} به ${to}${when}، ${passengers}، کلاس ${cabin}.`)
   }

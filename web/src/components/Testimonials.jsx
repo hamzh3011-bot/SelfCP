@@ -1,4 +1,4 @@
-import { testimonials } from '../data/content'
+import { branded, useSiteContent } from '../data/siteStore'
 import Clouds from './Clouds'
 import { Icon } from './Icons'
 import Reveal from './Reveal'
@@ -6,7 +6,11 @@ import SectionHeading from './SectionHeading'
 
 /** "۴٫۵" → 4.5 */
 function toLatinNumber(value) {
-  return Number(value.replace(/[۰-۹]/g, (digit) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit))).replace('٫', '.'))
+  return Number(
+    String(value ?? '')
+      .replace(/[۰-۹]/g, (digit) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)))
+      .replace('٫', '.'),
+  )
 }
 
 const layers = [
@@ -16,6 +20,8 @@ const layers = [
 ]
 
 export default function Testimonials() {
+  const { brand, testimonials } = useSiteContent()
+
   return (
     <section id="testimonials" className="sky-band section">
       <Clouds layers={layers} />
@@ -24,12 +30,12 @@ export default function Testimonials() {
         <SectionHeading
           eyebrow="تجربهٔ مسافران"
           title="مسافرانی که به ما اعتماد کردند"
-          lead="روایت‌های واقعی از سفرهایی که با آسمانه آغاز شدند."
+          lead={branded('روایت‌های واقعی از سفرهایی که با آسمانه آغاز شدند.', brand)}
         />
 
         <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {testimonials.map((person, index) => (
-            <Reveal key={person.name} delay={index * 90}>
+            <Reveal key={`${person.name}-${index}`} delay={index * 90}>
               <figure className="glass-card squircle flex h-full flex-col p-7">
                 <div className="flex items-center gap-4">
                   <img

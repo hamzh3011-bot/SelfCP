@@ -1,15 +1,18 @@
 import { footer } from '../data/content'
+import { useSiteContent } from '../data/siteStore'
 import { Icon, Logo } from './Icons'
 import Reveal from './Reveal'
 
 export default function Footer() {
+  const { brand } = useSiteContent()
+
   return (
     <footer id="footer" className="horizon pt-20">
       <div className="shell">
         <div className="grid gap-12 lg:grid-cols-[1.5fr_1fr_1fr_1.3fr]">
           <Reveal>
-            <Logo tone="dark" />
-            <p className="mt-6 max-w-sm text-sm text-ink-soft">{footer.about}</p>
+            <Logo tone="dark" name={brand.name} latin={brand.latin} />
+            <p className="mt-6 max-w-sm text-sm text-ink-soft">{brand.about}</p>
           </Reveal>
 
           {footer.columns.map((column, index) => (
@@ -56,7 +59,7 @@ export default function Footer() {
 
         <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-cloudgray py-8 sm:flex-row">
           <p className="text-sm text-ink-soft">{footer.copyright}</p>
-          <p className="text-sm text-ink-soft">© ۱۴۰۴ آسمانه</p>
+          <p className="text-sm text-ink-soft">© ۱۴۰۴ {brand.name}</p>
         </div>
       </div>
       <div className="horizon-line" aria-hidden="true" />

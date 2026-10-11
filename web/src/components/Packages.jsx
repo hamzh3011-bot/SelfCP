@@ -1,9 +1,11 @@
-import { packages } from '../data/content'
+import { useSiteContent } from '../data/siteStore'
 import { Icon } from './Icons'
 import Reveal from './Reveal'
 import SectionHeading from './SectionHeading'
 
 export default function Packages() {
+  const { packages } = useSiteContent()
+
   return (
     <section id="packages" className="section">
       <div className="shell">
@@ -15,7 +17,7 @@ export default function Packages() {
 
         <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {packages.map((item, index) => (
-            <Reveal key={item.title} delay={index * 90}>
+            <Reveal key={`${item.title}-${index}`} delay={index * 90}>
               <article className="pkg-card h-full">
                 <figure>
                   <img src={item.image} alt={item.title} loading="lazy" />

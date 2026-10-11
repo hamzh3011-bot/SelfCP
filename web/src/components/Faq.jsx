@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { faqs } from '../data/content'
+import { branded, useSiteContent } from '../data/siteStore'
 import SectionHeading from './SectionHeading'
 import Reveal from './Reveal'
 
 export default function Faq() {
+  const { brand } = useSiteContent()
   const [open, setOpen] = useState(0)
 
   return (
@@ -42,7 +44,7 @@ export default function Faq() {
                     aria-labelledby={`faq-trigger-${index}`}
                   >
                     <div>
-                      <p className="faq-answer">{item.a}</p>
+                      <p className="faq-answer">{branded(item.a, brand)}</p>
                     </div>
                   </div>
                 </div>

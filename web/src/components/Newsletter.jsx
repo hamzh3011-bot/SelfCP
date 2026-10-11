@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { newsletter } from '../data/content'
+import { addSubscriber } from '../data/siteStore'
 import Clouds from './Clouds'
 import { Icon } from './Icons'
 import Reveal from './Reveal'
@@ -17,6 +18,8 @@ export default function Newsletter() {
   const submit = (event) => {
     event.preventDefault()
     if (!email.trim()) return
+    // Subscribers are listed in the admin panel.
+    addSubscriber(email)
     setDone(true)
   }
 

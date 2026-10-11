@@ -1,14 +1,17 @@
 import { whyUs } from '../data/content'
+import { branded, useSiteContent } from '../data/siteStore'
 import { Icon } from './Icons'
 import Reveal from './Reveal'
 
 export default function WhyUs() {
+  const { brand } = useSiteContent()
+
   return (
     <section id="about" className="section">
       <div className="shell grid gap-14 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-20">
         <div className="lg:sticky lg:top-32 lg:self-start">
           <Reveal as="p" className="t-eyebrow">
-            چرا آسمانه
+            {branded('چرا آسمانه', brand)}
           </Reveal>
           <Reveal as="h2" delay={80} className="t-h2 mt-4">
             سفر، وقتی بهتر است که خیالتان راحت باشد

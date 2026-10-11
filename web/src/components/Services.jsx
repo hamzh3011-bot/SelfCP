@@ -1,14 +1,17 @@
 import { services } from '../data/content'
+import { branded, useSiteContent } from '../data/siteStore'
 import { Icon } from './Icons'
 import Reveal from './Reveal'
 import SectionHeading from './SectionHeading'
 
 export default function Services() {
+  const { brand } = useSiteContent()
+
   return (
     <section id="services" className="section">
       <div className="shell">
         <SectionHeading
-          eyebrow="خدمات آسمانه"
+          eyebrow={branded('خدمات آسمانه', brand)}
           title="همه چیز برای یک سفر بی‌دغدغه"
           lead="از لحظهٔ انتخاب مقصد تا بازگشت به خانه، هر بخش از سفر شما را به‌سادگی می‌سازیم."
         />
