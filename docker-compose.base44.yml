@@ -1,0 +1,38 @@
+# Base44 sandbox environment for the Asemaneh (آسمانه) website.
+#
+# The site is a Vite + React single-page app with no backend and no external
+# service, so this stack is a single service that runs the Vite dev server
+# straight from the cloned source (never from a prebuilt image), which keeps
+# live reload working for every later edit.
+#
+#   docker compose -f docker-compose.base44.yml up -d --build
+#
+services:
+  web:
+    image: node:22
+    working_dir: /app
+    restart: on-failure
+    volumes:
+      - ./web:/app
+    ports:
+      - '3000:5173'
+    environment:
+      # Bare entries: the platform's values pass straight through. The dev
+      # server only widens its host allowlist when BASE44_PREVIEW_MODE is "1".
+      - BASE44_PREVIEW_MODE
+      - BASE44_SANDBOX_HOST_DOMAIN
+      - BASE44_PUBLIC_HOST_SUFFIX
+    # Dependencies are installed at startup (after the bind mount exists), then
+    # the dev server takes over. --no-audit/--no-fund keep it quiet and fast.
+    command: ['sh', '-ec', 'CI=true npm install --no-audit --no-fund && exec npm run dev -- --host 0.0.0.0 --port 5173']
+    healthcheck:
+      # Probes real application responsiveness: the dev server must answer HTTP.
+      test:
+        - CMD-SHELL
+        - >-
+          node -e "fetch('http://127.0.0.1:5173/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      # First boot installs the npm dependencies, which takes a moment.
+      start_period: 150s
