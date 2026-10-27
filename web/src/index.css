@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("/fonts/Vazirmatn.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-sans: "Vazirmatn", "IRANSans", Tahoma, system-ui, sans-serif;
+  --font-display: "Vazirmatn", "IRANSans", Tahoma, system-ui, sans-serif;
+
+  --color-cream: #f5f0e8;
+  --color-cream-deep: #ebe4db;
+  --color-espresso: #2c2621;
+  --color-charcoal: #262220;
+  --color-caramel: #a9744a;
+  --color-caramel-soft: #c89a6c;
+  --color-sand: #d9cbbd;
+  --color-ink-soft: #4d443c;
+  --color-warm-white: #fffdfb;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-cream font-sans text-espresso antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--color-caramel);
+    color: var(--color-warm-white);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-caramel);
+    outline-offset: 3px;
+  }
+}
+
+@utility container-page {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 84rem;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .container-page {
+    padding-inline: 2.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container-page {
+    padding-inline: 4rem;
+  }
+}
+
+/* Soft editorial label used above section headings */
+@utility eyebrow {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

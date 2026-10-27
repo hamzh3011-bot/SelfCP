@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1250" width="1000" height="1250">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2=".5" y2="1">
+      <stop offset="0" stop-color="#F6EEE1"/>
+      <stop offset="1" stop-color="#DFCFB9"/>
+    </linearGradient>
+    <radialGradient id="light" cx=".3" cy=".15" r=".8">
+      <stop offset="0" stop-color="#FFFDF6" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#FFFDF6" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity=".55"/>
+      <stop offset=".35" stop-color="#FFFFFF" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity=".45"/>
+    </linearGradient>
+    <linearGradient id="milk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F3E4CB"/>
+      <stop offset="1" stop-color="#E3CBA8"/>
+    </linearGradient>
+    <linearGradient id="brew" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#B48152"/>
+      <stop offset="1" stop-color="#8B5735"/>
+    </linearGradient>
+    <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+  </defs>
+
+  <rect width="1000" height="1250" fill="url(#bg)"/>
+  <rect width="1000" height="1250" fill="url(#light)"/>
+  <ellipse cx="500" cy="1080" rx="300" ry="60" fill="#8B6B4C" opacity=".28" filter="url(#shadow)"/>
+
+  <!-- straw -->
+  <rect x="600" y="150" width="34" height="760" rx="17" fill="#C89A6C" transform="rotate(12 617 530)"/>
+  <rect x="600" y="150" width="34" height="120" rx="17" fill="#A9744A" transform="rotate(12 617 530)"/>
+
+  <!-- glass -->
+  <path d="M300 260h400l-30 700a64 64 0 0 1-64 60H394a64 64 0 0 1-64-60Z" fill="#F0E6D6" opacity=".55"/>
+  <path d="M300 260h400l-30 700a64 64 0 0 1-64 60H394a64 64 0 0 1-64-60Z" fill="url(#glass)"/>
+
+  <!-- layered drink -->
+  <path d="M316 400h368l-10 240H326Z" fill="url(#brew)"/>
+  <path d="M326 640h348l-8 200H334Z" fill="url(#milk)"/>
+  <path d="M334 840h332l-8 120a64 64 0 0 1-64 60H406a64 64 0 0 1-64-60Z" fill="#F7EDDC"/>
+
+  <!-- ice -->
+  <g fill="#FFFFFF" opacity=".45">
+    <rect x="352" y="440" width="96" height="92" rx="20" transform="rotate(-14 400 486)"/>
+    <rect x="470" y="500" width="86" height="84" rx="18" transform="rotate(18 513 542)"/>
+    <rect x="560" y="420" width="76" height="74" rx="16" transform="rotate(-8 598 457)"/>
+  </g>
+
+  <!-- rim + highlights -->
+  <ellipse cx="500" cy="262" rx="200" ry="26" fill="#FBF3E6"/>
+  <ellipse cx="500" cy="262" rx="200" ry="26" fill="none" stroke="#D8C5AC" stroke-width="4"/>
+  <ellipse cx="500" cy="262" rx="172" ry="18" fill="#B48152"/>
+  <rect x="336" y="330" width="14" height="520" rx="7" fill="#FFFFFF" opacity=".5"/>
+  <g fill="#FFFFFF" opacity=".55">
+    <circle cx="660" cy="380" r="9"/>
+    <circle cx="672" cy="700" r="7"/>
+    <circle cx="350" cy="580" r="8"/>
+  </g>
+
+  <!-- mint -->
+  <g fill="#6E7B5C">
+    <path d="M520 236c-6-40 16-68 52-78-4 40-22 66-52 78Z"/>
+    <path d="M520 236c34-18 66-12 88 12-34 16-64 14-88-12Z" opacity=".8"/>
+  </g>
+
+  <rect width="1000" height="1250" filter="url(#grain)" opacity=".08" style="mix-blend-mode:overlay"/>
+</svg>

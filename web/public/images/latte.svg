@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1250" width="1000" height="1250">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2=".6" y2="1">
+      <stop offset="0" stop-color="#F7EFE3"/>
+      <stop offset="1" stop-color="#E2D2BE"/>
+    </linearGradient>
+    <radialGradient id="light" cx=".34" cy=".2" r=".8">
+      <stop offset="0" stop-color="#FFFDF6" stop-opacity=".95"/>
+      <stop offset="1" stop-color="#FFFDF6" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="coffee" x1="0" y1="0" x2=".7" y2="1">
+      <stop offset="0" stop-color="#A9744A"/>
+      <stop offset=".55" stop-color="#8A5735"/>
+      <stop offset="1" stop-color="#6B4026"/>
+    </linearGradient>
+    <linearGradient id="porcelain" x1="0" y1="0" x2=".8" y2="1">
+      <stop offset="0" stop-color="#FFFDF9"/>
+      <stop offset="1" stop-color="#E8DBCA"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="26"/>
+    </filter>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+  </defs>
+
+  <rect width="1000" height="1250" fill="url(#bg)"/>
+  <rect width="1000" height="1250" fill="url(#light)"/>
+  <ellipse cx="500" cy="640" rx="430" ry="400" fill="#CDB99F" opacity=".35" filter="url(#shadow)"/>
+
+  <!-- saucer -->
+  <circle cx="500" cy="620" r="366" fill="url(#porcelain)"/>
+  <circle cx="500" cy="620" r="366" fill="none" stroke="#D9C8B2" stroke-width="3"/>
+  <circle cx="500" cy="620" r="300" fill="#F6EEE2"/>
+
+  <!-- cup -->
+  <circle cx="500" cy="620" r="286" fill="url(#porcelain)"/>
+  <circle cx="500" cy="620" r="262" fill="url(#coffee)"/>
+  <circle cx="500" cy="620" r="250" fill="none" stroke="#C08A5E" stroke-width="12" opacity=".55"/>
+
+  <!-- latte art heart -->
+  <path d="M500 400c44-62 112-38 112 20 0 60-70 96-112 146-42-50-112-86-112-146 0-58 68-82 112-20Z" fill="#F4E5D1" opacity=".95"/>
+  <path d="M500 400c-6 44-4 96 0 166" stroke="#C08A5E" stroke-width="4" opacity=".35" fill="none"/>
+
+  <!-- beans -->
+  <g fill="#5E3A24" opacity=".9">
+    <ellipse cx="184" cy="300" rx="30" ry="20" transform="rotate(-24 184 300)"/>
+    <ellipse cx="206" cy="352" rx="30" ry="20" transform="rotate(18 206 352)"/>
+    <ellipse cx="820" cy="880" rx="30" ry="20" transform="rotate(30 820 880)"/>
+    <ellipse cx="788" cy="930" rx="30" ry="20" transform="rotate(-16 788 930)"/>
+  </g>
+  <g fill="#C08A5E" opacity=".5">
+    <path d="M170 300q14 10 28 0" stroke="#C08A5E" stroke-width="3" fill="none"/>
+    <path d="M806 880q14 10 28 0" stroke="#C08A5E" stroke-width="3" fill="none"/>
+  </g>
+
+  <!-- spoon -->
+  <g transform="rotate(18 760 330)">
+    <rect x="752" y="180" width="16" height="250" rx="8" fill="#D8C6AE"/>
+    <ellipse cx="760" cy="156" rx="42" ry="54" fill="#E4D5C0"/>
+  </g>
+
+  <rect width="1000" height="1250" filter="url(#grain)" opacity=".08" style="mix-blend-mode:overlay"/>
+</svg>

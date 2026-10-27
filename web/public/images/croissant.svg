@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1250" width="1000" height="1250">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2=".5" y2="1">
+      <stop offset="0" stop-color="#F8F1E6"/>
+      <stop offset="1" stop-color="#E1D1BC"/>
+    </linearGradient>
+    <radialGradient id="light" cx=".32" cy=".18" r=".8">
+      <stop offset="0" stop-color="#FFFDF6" stop-opacity=".95"/>
+      <stop offset="1" stop-color="#FFFDF6" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="crust" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#D19B5F"/>
+      <stop offset=".45" stop-color="#B87A3F"/>
+      <stop offset="1" stop-color="#8E5A2C"/>
+    </linearGradient>
+    <linearGradient id="layers" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E8C08A"/>
+      <stop offset="1" stop-color="#C9955C"/>
+    </linearGradient>
+    <radialGradient id="plate" cx=".45" cy=".35" r=".7">
+      <stop offset="0" stop-color="#FFFDF9"/>
+      <stop offset="1" stop-color="#E7D9C6"/>
+    </radialGradient>
+    <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="24"/>
+    </filter>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+  </defs>
+
+  <rect width="1000" height="1250" fill="url(#bg)"/>
+  <rect width="1000" height="1250" fill="url(#light)"/>
+  <ellipse cx="500" cy="790" rx="380" ry="90" fill="#A98B6A" opacity=".32" filter="url(#shadow)"/>
+
+  <ellipse cx="500" cy="760" rx="396" ry="140" fill="url(#plate)"/>
+  <ellipse cx="500" cy="760" rx="396" ry="140" fill="none" stroke="#D6C4AD" stroke-width="4"/>
+  <ellipse cx="500" cy="742" rx="320" ry="104" fill="#F6ECDD"/>
+
+  <!-- croissant body -->
+  <g>
+    <path d="M196 720c0-148 136-268 304-268s304 120 304 268c0 66-64 96-140 74-52-15-98-46-164-46s-112 31-164 46c-76 22-140-8-140-74Z" fill="url(#crust)"/>
+    <path d="M232 704c10-118 128-212 268-212s258 94 268 212c6 68-44 96-112 78-52-14-92-40-156-40s-104 26-156 40c-68 18-118-10-112-78Z" fill="url(#layers)"/>
+
+    <!-- segment creases -->
+    <g stroke="#8E5A2C" stroke-width="9" opacity=".5" fill="none" stroke-linecap="round">
+      <path d="M330 512c-16 66-14 128 4 186"/>
+      <path d="M420 474c-12 74-10 146 8 214"/>
+      <path d="M520 462c-2 78 0 152 4 226"/>
+      <path d="M620 476c14 76 14 146-2 214"/>
+      <path d="M700 516c18 66 20 126 4 184"/>
+    </g>
+
+    <!-- almond cream lines -->
+    <g stroke="#F3E0C2" stroke-width="7" opacity=".75" fill="none" stroke-linecap="round">
+      <path d="M280 606c68 26 138 38 222 38s154-12 222-38"/>
+      <path d="M300 664c62 22 128 32 202 32s140-10 202-32"/>
+    </g>
+
+    <!-- almond slivers -->
+    <g fill="#F0DCBC">
+      <ellipse cx="372" cy="566" rx="34" ry="11" transform="rotate(-22 372 566)"/>
+      <ellipse cx="470" cy="534" rx="34" ry="11" transform="rotate(12 470 534)"/>
+      <ellipse cx="566" cy="540" rx="34" ry="11" transform="rotate(-8 566 540)"/>
+      <ellipse cx="654" cy="576" rx="34" ry="11" transform="rotate(24 654 576)"/>
+      <ellipse cx="420" cy="632" rx="28" ry="9" transform="rotate(18 420 632)"/>
+      <ellipse cx="598" cy="630" rx="28" ry="9" transform="rotate(-16 598 630)"/>
+    </g>
+
+    <!-- icing sugar -->
+    <g fill="#FFFFFF" opacity=".8">
+      <circle cx="340" cy="500" r="5"/>
+      <circle cx="406" cy="470" r="4"/>
+      <circle cx="512" cy="458" r="5"/>
+      <circle cx="612" cy="468" r="4"/>
+      <circle cx="676" cy="500" r="5"/>
+      <circle cx="466" cy="606" r="4"/>
+      <circle cx="556" cy="664" r="4"/>
+    </g>
+  </g>
+
+  <!-- crumbs -->
+  <g fill="#B87A3F" opacity=".6">
+    <circle cx="238" cy="840" r="8"/>
+    <circle cx="274" cy="866" r="5"/>
+    <circle cx="756" cy="846" r="7"/>
+    <circle cx="792" cy="870" r="5"/>
+  </g>
+
+  <rect width="1000" height="1250" filter="url(#grain)" opacity=".08" style="mix-blend-mode:overlay"/>
+</svg>
